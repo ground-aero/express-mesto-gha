@@ -1,0 +1,27 @@
+{
+  "name": "express-mesto-gha",
+  "version": "1.0.0",
+  "description": "backend express app",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start" : "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ground-aero/express-mesto-gha.git"
+  },
+  "author": "eugene avdeev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ground-aero/express-mesto-gha/issues"
+  },
+  "homepage": "https://github.com/ground-aero/express-mesto-gha#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.21"
+  }
+}
