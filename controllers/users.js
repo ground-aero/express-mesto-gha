@@ -1,15 +1,27 @@
 const User = require('../models/user');
 
-module.exports.getUser = (req, res) => {
-  
-}
+// 200 - success
+// 201 - success, resource created
+// 400 - not valid data
+// 401 - not authorised
+// 403 - authorised, no access
+// 404 - resource not found
+// 422 - unprocessable entity
 
-module.exports.createUser = (req, res) => {
-  const {name, about, avatar} = req.body; // получим из объекта запроса имя, описание, автвар пользователя
+const createUser = (req, res) => {
+  const { name, about, avatar } = req.body; // получим из объекта запроса имя, описание, автр польз
 
-  User.create({name, about, avatar}) // создадим документ на основе пришедших данных
+  return User.create(req.body) // создадим документ на основе пришедших данных
     // вернём записанные в базу данные
-    .then(user => res.send({data: user}))
+    .then((user) => res.status(201).send({ data: user }))
     // данные не записались, вернём ошибку
-    .catch(err => res.status(500).send({message: 'an error occurred'}));
-}
+    .catch((err) => res.status(500).send({ message: `an error occurred ${err}` }));
+};
+
+const getUser = (req, res) => {
+  const { name, about, avatar } = req.body; // получим из объекта запроса имя, опис, автр польз
+};
+
+const getUsers = (req, res) => { };
+
+module.exports = { createUser, getUser, getUsers };

@@ -1,18 +1,25 @@
 const express = require('express');
 const mongoose = require('mongoose');
-
-const { PORT = 3000, BASE_PATH } = process.env;
+const path = require('path');
+const usersRouter = require('./routes/users');
 
 const app = express();
 
+const { PORT = 3000 } = process.env;
+
+app.use(express.json());
+
 // подключаемся к серверу mongo
-mongoose.connect('mongodb://localhost:27017/mestodb', {
+// mongoose.connect('mongodb://27017/mestodb');
+mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
   useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false
+  // useCreateIndex: true,
+  // useFindAndModify: false,
 });
 
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/', usersRouter); // запросы в корень будем матчить с путями которые прописали в руте юзеров
+
 app.listen(PORT, () => {
-  console.log('Ссылка на сервер:');
-  console.log(BASE_PATH);
+  console.log(`App listening on port ${PORT}`);
 });
