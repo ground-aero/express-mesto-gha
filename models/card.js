@@ -1,3 +1,4 @@
+// директория models/ содержит файлы описания схем пользователя и карточки;
 const mongoose = require('mongoose');
 
 const cardSchema = new mongoose.Schema({
