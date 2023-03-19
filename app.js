@@ -28,7 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 
 /** 3 routes */
-app.use('/', usersRouter); // запросы в корень будем матчить с путями которые прописали в руте юзеров
+app.use('/users', usersRouter); // запросы в корень будем матчить с путями которые прописали в руте юзеров
 
 /** 4 */
 app.listen(PORT, () => {
