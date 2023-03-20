@@ -18,8 +18,9 @@ const cardSchema = new mongoose.Schema({
     required: true,
   },
   likes: { // список лайкнувших пост пользователей
-    type: mongoose.Schema.Types.ObjectId, // массив ObjectId
     default: [], // по умолчанию — пустой массив
+    type: mongoose.Schema.Types.ObjectId, // массив ObjectId
+    ref: 'user',
   },
   createdAt: {
     type: Date,
@@ -27,4 +28,4 @@ const cardSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('Card', cardSchema);
+module.exports = mongoose.model('card', cardSchema);
