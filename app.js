@@ -3,9 +3,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const bodyParser = require('body-parser');
-const usersRouter = require('./routes/users');
 
+/** 1 */
 const { PORT = 3000 } = process.env;
+const app = express();
+
+const usersRouter = require('./routes/users');
+const cardsRouter = require('./routes/cards');
 
 /** подключаемся к серверу mongo */
 // mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
@@ -15,9 +19,6 @@ const { PORT = 3000 } = process.env;
 //   // useFindAndModify: false,
 // });
 mongoose.connect('mongodb://0.0.0.0:27017/mestodb');
-
-/** 1 */
-const app = express();
 
 /** 2 */
 // parse application/x-www-form-urlencoded
@@ -29,6 +30,17 @@ app.use(bodyParser.json());
 
 /** 3 routes */
 app.use('/users', usersRouter); // запросы в корень будем матчить с путями которые прописали в руте юзеров
+app.use('/cards', cardsRouter);
+
+// временное решение авторизации. мидлвэр
+app.use((req, res, next) => {
+  req.user = { // Она добавляет в каждый запрос объект user.
+    // Берите из него идентификатор пользователя в контроллере создания карточки.
+    _id: '641759709a112c44444a1355'// вставьте _id созданного в предыдущем пункте пользователя
+  };
+
+  next();
+});
 
 /** 4 */
 app.listen(PORT, () => {

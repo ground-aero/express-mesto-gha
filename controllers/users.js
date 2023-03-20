@@ -1,4 +1,5 @@
-// директория controllers/ содержит файлы описания моделей пользователя и карточки;
+// Контроллер юзера
+// содержит файлы описания моделей пользователя и карточки;
 const User = require('../models/user');
 // 200 - success; 201 - success, resource created; 400 - not valid data; 401 - not authorised
 // 403 - authorised, no access; 404 - resource not found; 422 - unprocessable entity
