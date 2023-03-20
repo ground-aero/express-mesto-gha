@@ -1,4 +1,6 @@
 // Контроллер создания карточки
+const NotFoundErr = require('../errors/not-found-err');
+const IncorrectDataErr = require('../errors/incorrect-data-err');
 const Card = require('../models/card');
 
 /** Возвращает все карточки
@@ -16,7 +18,7 @@ const getCards = (req, res) => Card.find({})
  * user._id - ID польз.
  * @return {Promise}
  */
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   // console.log(req.user._id);// _id станет доступен. Мы захардкодили идентификатор пользователя,
   // кто бы ни создал карточку, в базе у неё будет один и тот же автор
 
@@ -28,7 +30,15 @@ const createCard = (req, res) => {
     .then((card) => { res.status(201).send(card); }) // В теле запроса на созд карточки
     // передайте JSON-объект с
     // данные не записались, вернём ошибку
-    .catch((err) => res.status(500).send({ message: `an error occurred ${err}` }));
+    .catch((err) => {
+      if (err.name === 'IncorrectDataErr') {
+        next(new IncorrectDataErr(`Incorrect Data card: ${err}`));
+        // res.status(400).send({ message: `Error validating user: ${err}` });
+      } else {
+        res.status(500).send({ message: `Internal server error: ${err}` });
+      }
+    });
+  // .catch((err) => res.status(500).send({ message: `an error occurred ${err}` }));
 };
 
 /** Удаляет карточку
@@ -39,9 +49,19 @@ const deleteCard = (req, res) => {
   const { cardId } = req.params;
 
   Card.findByIdAndRemove(cardId)
-    .orFail()
+    .orFail(() => {
+      // мы попадем в orFail, если не найдем карточку
+      throw new NotFoundErr();
+    })
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(500).send({ message: `Ошибка сервера: ${err}` }));
+    .catch((err) => {
+      if (err.name === 'NotFoundErr') {
+        res.status(err.status).send(err);
+      } else {
+        res.status(500).send({ message: `Internal server error: ${err}` });
+      }
+    });
+  // .catch((err) => res.status(500).send({ message: `Ошибка сервера: ${err}` }));
 };
 
 /** поставить лайк карточке
@@ -67,8 +87,8 @@ const dislikeCard = (req, res) => {
   const { cardId } = req.params;
   const { _id } = req.user;
 
-  // убрать _id из массива польз-ля
   Card.findByIdAndUpdate(cardId, { $pull: { likes: _id } }, { new: true })
+    // убрать _id из массива польз-ля
     .orFail()
     .then((card) => res.send({ data: card }))
     .catch((err) => res.status(500).send({ message: `Ошибка сервера: ${err}` }));

@@ -1,5 +1,7 @@
 // Контроллер юзера
 // содержит файлы описания моделей пользователя и карточки;
+const NotFoundErr = require('../errors/not-found-err');
+const IncorrectDataErr = require('../errors/incorrect-data-err');
 const User = require('../models/user');
 // 200 - success; 201 - success, resource created; 400 - not valid data; 401 - not authorised
 // 403 - authorised, no access; 404 - resource not found; 422 - unprocessable entity
@@ -9,9 +11,18 @@ const User = require('../models/user');
  * @param res
  */
 const getUsers = (req, res) => User.find({})
+  .orFail(() => {
+    throw new IncorrectDataErr();
+  })
   .then((users) => res.status(200).send({ data: users }))
-  .catch(() => res.status(500).send({ message: 'Ошибка на сервере' }));
-  // res.send('hello to getUsers from server..')
+  .catch((err) => {
+    if (err.name === 'IncorrectDataErr') {
+      res.status(err.status).send(err);
+    } else {
+      res.status(500).send({ message: `Internal server error: ${err}` });
+    }
+  });
+  // .catch(() => res.status(500).send({ message: 'Ошибка на сервере' }));
 
 /** Получить пользователя по ID
  * @param req - /users/:userId, params.userId - ID пользователя, метод GET
@@ -22,10 +33,19 @@ const getUserById = (req, res) => {
   const { userId } = req.params;
 
   User.findById(userId)
+    .orFail(() => {
+      throw new NotFoundErr();
+    }) // мы попадем в orFail, если мы не найдем нашего пользователя
     .then((user) => res.status(200).send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Ошибка сервера' }));
-  // const user = users.find((item) => item._id === id);
-  // res.send(user);
+    .catch((err) => {
+      if (err.name === 'NotFoundErr') {
+        res.status(err.status).send(err);
+      } else {
+        res.status(500).send({ message: `Internal server error: ${err}` });
+      }
+      // res.status(500).send({ message: 'Ошибка сервера' }));
+      // ошибка из 'orFail' попадет в 'catch'
+    });
 };
 
 const createUser = (req, res) => {
@@ -35,7 +55,14 @@ const createUser = (req, res) => {
     .then((user) => res.status(201).send(user)) // В теле запроса на созд польз
     // передайте JSON-объект с
     // данные не записались, вернём ошибку
-    .catch((err) => res.status(500).send({ message: `an error occurred ${err}` }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: `Error validating user: ${err}` });
+      } else {
+        res.status(500).send({ message: `Internal server error: ${err}` });
+      }
+    });
+  // .catch((err) => res.status(500).send({ message: `an error occurred ${err}` }));
 };
 /** Обновить инфо о пользователе
  * @param req /users/me, PATCH method
