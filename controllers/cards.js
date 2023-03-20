@@ -12,15 +12,18 @@ const getCards = (req, res) => Card.find({})
 
 /** Создает карточку
  * @param req, /cards, метод POST
- * @param res
+ * {name - имя изображ, link - ссылка}
+ * user._id - ID польз.
+ * @return {Promise}
  */
 const createCard = (req, res) => {
-  console.log(req.user._id);// _id станет доступен. Мы захардкодили идентификатор пользователя,
+  // console.log(req.user._id);// _id станет доступен. Мы захардкодили идентификатор пользователя,
   // кто бы ни создал карточку, в базе у неё будет один и тот же автор
 
   const { name, link } = req.body;
+  const owner = req.user._id;
 
-  return Card.create({ name, link }) // созд док на осн приш. данных.
+  return Card.create({ name, link, owner }) // созд док на осн приш. данных.
     // Вернём записаные в базу данные
     .then((card) => { res.status(201).send(card); }) // В теле запроса на созд карточки
     // передайте JSON-объект с
@@ -38,7 +41,39 @@ const deleteCard = (req, res) => {
   Card.findByIdAndRemove(cardId)
     .orFail()
     .then((card) => res.send({ data: card }))
-    .catch((err) => { res.status(500).send({ message: 'Ошибка сервера' }) });
-}
+    .catch((err) => res.status(500).send({ message: `Ошибка сервера: ${err}` }));
+};
 
-module.exports = { getCards, createCard, deleteCard };
+/** поставить лайк карточке
+ * @param req, /cards/:cardId/likes , PUT method
+ * @param res
+ */
+const likeCard = (req, res) => {
+  const { cardId } = req.params;
+  const { _id } = req.user;
+
+  // добавить _id польз-ля в массив лайков, если его в нем нет
+  Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, { new: true })
+    .orFail()
+    .then((card) => res.send({ data: card }))
+    .catch((err) => res.status(500).send({ message: `Ошибка сервера: ${err}` }));
+};
+
+/** убрать лайк с карточки
+ * @param req, /cards/:cardId/likes , DELETE method
+ * @param res
+ */
+const dislikeCard = (req, res) => {
+  const { cardId } = req.params;
+  const { _id } = req.user;
+
+  // убрать _id из массива польз-ля
+  Card.findByIdAndUpdate(cardId, { $pull: { likes: _id } }, { new: true })
+    .orFail()
+    .then((card) => res.send({ data: card }))
+    .catch((err) => res.status(500).send({ message: `Ошибка сервера: ${err}` }));
+};
+
+module.exports = {
+  getCards, createCard, deleteCard, likeCard, dislikeCard,
+};
