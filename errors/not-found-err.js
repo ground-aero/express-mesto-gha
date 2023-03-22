@@ -1,8 +1,7 @@
-const DefaultErr = require('./default-err');
-
-class NotFoundErr extends DefaultErr {
-  constructor() {
-    super(404, 'Not found..');
+class NotFoundErr extends Error {
+  constructor(message = 'Not found') {
+    super(message);
+    this.status = 404;
   }
 }
 

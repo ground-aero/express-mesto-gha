@@ -1,8 +1,7 @@
-const DefaultErr = require('./default-err');
-
-class IncorrectDataErr extends DefaultErr {
-  constructor() {
-    super(400, 'Incorrect Data Error.');
+class IncorrectDataErr extends Error {
+  constructor(message = 'Bad Request') {
+    super(message);
+    this.status = 400;
   }
 }
 
