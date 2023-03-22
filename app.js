@@ -2,6 +2,10 @@
 const express = require('express');
 const mongoose = require('mongoose').default;
 const bodyParser = require('body-parser');
+const {
+  ERR_CODE_404,
+  ERR_CODE_500,
+} = require('./errors/errors-codes');
 
 /** 1 */
 const { PORT = 3000 } = process.env;
@@ -27,13 +31,25 @@ app.use((req, res, next) => {
     // Берите из него идентификатор пользователя в контроллере создания карточки.
     _id: '641759709a112c44444a1355', // вставьте _id созданного в предыдущем пункте пользователя
   };
-
   next();
 });
 
 /** 3 routing */
 app.use('/users', usersRouter); // запросы в корень будем матчить с путями которые прописали в руте юзеров
 app.use('/cards', cardsRouter);
+
+/** error handler - перед слушателем порта */
+app.all('*', (req, res, next) => {
+      if (res.status(404)) {
+      res.status(ERR_CODE_404).send('сервер не может найти запрашиваемый ресурс');
+      return;
+    }
+    if (res.status(500)) {
+      res.status(ERR_CODE_500).send('ошибка сервера, по умолчанию');
+      return;
+    }
+    next();
+})
 
 /** 4 */
 app.listen(PORT, () => {

@@ -1,7 +1,7 @@
 // Контроллер юзера
 // содержит файлы описания моделей пользователя и карточки;
 // const NotFoundErr = require('../errors/not-found-err');
-const IncorrectDataErr = require('../errors/incorrect-data-err');
+// const IncorrectDataErr = require('../errors/incorrect-data-err');
 const User = require('../models/user');
 const {
   ERR_CODE_400,
@@ -41,15 +41,17 @@ const updateProfileInfo = (req, res) => {
   const { name, about } = req.body;
 
   return User.findByIdAndUpdate(_id, { name, about })
-    .then((user) => {
-      res.send({ data: user });
-    })
+    .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
-      } else {
-        res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
+        return;
       }
+      if (err.name === 'CastError') {
+        res.status(ERR_CODE_404).send({ message: 'Пользователь с указанным _id не найден' });
+        return;
+      }
+      res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
     });
 };
 // const updateProfileInfo = (req, res) => {
@@ -80,18 +82,27 @@ const updateProfileInfo = (req, res) => {
  * @param res
  */
 const getUsers = (req, res) => User.find({})
-  .orFail(() => {
-    throw new IncorrectDataErr();
-  })
+
   .then((users) => res.status(200).send({ data: users }))
   .catch((err) => {
-    if (err.name === 'IncorrectDataErr') {
-      res.status(err.status).send(err);
+    if (err.name === 'IncorrectDataErr') { // 400
+      res.status(err.status).send({ message: `Переданы некорректные данные при создании пользователя ${err}` });
     } else {
       res.status(500).send({ message: `Internal server error: ${err}` });
     }
   });
-  // .catch(() => res.status(500).send({ message: 'Ошибка на сервере' }));
+// const getUsers = (req, res) => User.find({})
+//   .orFail(() => {
+//     throw new IncorrectDataErr();
+//   })
+//   .then((users) => res.status(200).send({ data: users }))
+//   .catch((err) => {
+//     if (err.name === 'IncorrectDataErr') {
+//       res.status(err.status).send(err);
+//     } else {
+//       res.status(500).send({ message: `Internal server error: ${err}` });
+//     }
+//   });
 
 /** Получить пользователя по ID
  * @param req - /users/:userId, params.userId - ID пользователя, метод GET
