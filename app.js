@@ -40,16 +40,16 @@ app.use('/cards', cardsRouter);
 
 /** error handler - перед слушателем порта */
 app.all('*', (req, res, next) => {
-      if (res.status(404)) {
-      res.status(ERR_CODE_404).send('сервер не может найти запрашиваемый ресурс');
-      return;
-    }
-    if (res.status(500)) {
-      res.status(ERR_CODE_500).send('ошибка сервера, по умолчанию');
-      return;
-    }
-    next();
-})
+  if (res.status(404)) {
+    res.status(ERR_CODE_404).send('сервер не может найти запрашиваемый ресурс');
+    return;
+  }
+  if (res.status(500)) {
+    res.status(ERR_CODE_500).send('ошибка сервера, по умолчанию');
+    return;
+  }
+  next();
+});
 
 /** 4 */
 app.listen(PORT, () => {
