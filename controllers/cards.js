@@ -67,37 +67,32 @@ const deleteCard = (req, res) => {
       }
     });
 };
-// const deleteCard = (req, res) => {
-//   const { cardId } = req.params;
-//
-//   return Card.findByIdAndRemove(cardId)
-//     .orFail(() => {
-//       // мы попадем в orFail, если не найдем карточку
-//       throw new NotFoundErr();
-//     })
-//     .then((card) => res.send({ data: card }))
-//     .catch((err) => {
-//       if (err.name === 'NotFoundErr') {
-//         res.status(err.status).send(err);
-//       } else {
-//         res.status(500).send({ message: `Internal server error: ${err}` });
-//       }
-//     });
-// };
 
 /** поставить лайк карточке
  * @param req, /cards/:cardId/likes , PUT method
+ * url: "http://localhost:3000/cards/63f61dfbc7eee15ca4adc16e/likes"
  * @param res
  */
 const likeCard = (req, res) => {
-  const { cardId } = req.params;
-  const { _id } = req.user;
+  const {cardId} = req.params;
+  const {_id} = req.user;
 
   // добавить _id польз-ля в массив лайков, если его в нем нет
-  Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, { new: true })
-    .orFail()
-    .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(500).send({ message: `Ошибка сервера: ${err}` }));
+  Card.findByIdAndUpdate(cardId, {$addToSet: {likes: _id}}, {new: true})
+    .orFail(new Error('idNotFoundError'))
+    .then((card) => res.send({data: card}))
+    .catch((err) => {
+      if (err.name === 'idNotFoundError') {
+        res.status(ERR_CODE_404).send({message: `Передан несуществующий _id карточки: ${err}`})
+        return;
+      }
+      if (err.name === 'CastError') {
+        res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные для постановки лайка' })
+      }
+      else {
+        res.status(ERR_CODE_500).send({message: `Ошибка сервера: ${err}`})
+      }
+    });
 };
 
 /** убрать лайк с карточки

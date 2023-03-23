@@ -10,6 +10,7 @@ const {
 /** 1 */
 const { PORT = 3000 } = process.env;
 const app = express();
+const morgan = require('morgan');
 
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
@@ -25,6 +26,8 @@ mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {
   useNewUrlParser: true,
 });
 
+app.use(morgan('dev'));
+
 // временное решение авторизации. мидлвэр
 app.use((req, res, next) => {
   req.user = { // Она добавляет в каждый запрос объект user.
@@ -34,14 +37,14 @@ app.use((req, res, next) => {
   next();
 });
 
-/** 3 routing */
+/** 3 Routes which handling requests */
 app.use('/users', usersRouter); // запросы в корень будем матчить с путями которые прописали в руте юзеров
 app.use('/cards', cardsRouter);
 
 /** error handler - перед слушателем порта */
 app.all('*', (req, res, next) => {
   if (res.status(404)) {
-    res.status(ERR_CODE_404).send('сервер не может найти запрашиваемый ресурс');
+    res.status(ERR_CODE_404).send('сервер не может найти запрашиваемый маршрут/ресурс');
     return;
   }
   if (res.status(500)) {

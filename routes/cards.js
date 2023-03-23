@@ -6,6 +6,7 @@ const {
 // const Card = require('../models/card');
 
 /** 'cards' можем удалить, рут теперь работает относительно урла, а не всего приложения */
+/** Handle incoming @requests to /users */
 router.get('/', getCards); // возвр. все карточки, 'cards' можем удалять. 2-й аргумент это ф-ция контроллер.
 // router.get('/:userId', getUser); // возвращ польз по _id. 2-й аргум -это ф-ция контроллер.
 // создаёт карточку
