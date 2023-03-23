@@ -1,5 +1,5 @@
 // Контроллер создания карточки
-const NotFoundErr = require('../errors/not-found-err');
+// const NotFoundErr = require('../errors/not-found-err');
 // const IncorrectDataErr = require('../errors/incorrect-data-err');
 const Card = require('../models/card');
 const {
@@ -53,9 +53,9 @@ const deleteCard = (req, res) => {
   return Card.findByIdAndRemove(cardId)
     .then((card) => {
       if (card) {
-        res.status(200).send({ message: 'Карточка удалена' })
+        res.status(200).send({ message: 'Карточка удалена' });
       } else {
-        res.status(ERR_CODE_404).send({ message: 'Карточка с указанным _id не найдена'})
+        res.status(ERR_CODE_404).send({ message: 'Карточка с указанным _id не найдена' });
       }
     })
     // .then((card) => res.send({ data: card }))
