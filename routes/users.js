@@ -1,7 +1,11 @@
 /** директория routes/ содержит описание основных роутов для пользователя и карточки. */
 const router = require('express').Router();
 const {
-  getUsers, getUserById, createUser, updateProfileInfo, updateAvatar,
+  createUser,
+  updateProfileInfo,
+  getUsers,
+  getUserById,
+  updateAvatar,
 } = require('../controllers/users');
 
 /** 'users' можем удалить, рут теперь работает относительно урла, а не всего приложения */

@@ -18,7 +18,6 @@ const userSchema = new mongoose.Schema({ // определить поля для
   avatar: {
     type: String,
     required: true,
-    default: 'https://lumiere-a.akamaihd.net/v1/images/p_avatar_de27b20f.jpeg',
   },
 });
 
