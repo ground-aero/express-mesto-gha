@@ -111,9 +111,9 @@ const dislikeCard = (req, res) => {
       }
       if (err.name === 'CastError') {
         res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные для снятии лайка' });
-      } else {
-        res.status(ERR_CODE_500).send({ message: `Ошибка по умолчанию ${err}` });
+        return;
       }
+      res.status(ERR_CODE_500).send({ message: `Ошибка по умолчанию ${err}` });
     });
 };
 
