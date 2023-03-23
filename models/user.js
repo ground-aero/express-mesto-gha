@@ -5,14 +5,14 @@ const userSchema = new mongoose.Schema({ // определить поля для
   name: {
     type: String,
     required: true,
-    minLength: 2,
+    minlength: 2,
     maxLength: [30, 'maximum length is 30 symbols...'],
     // default: 'Eugene',
   },
   about: {
     type: String,
     minLength: 2,
-    maxLength: [30, 'maximum length is 30 symbols...'],
+    maxlength: [30, 'maximum length is 30 symbols...'],
     required: true,
   },
   avatar: {
