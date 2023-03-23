@@ -99,7 +99,7 @@ const updateAvatar = (req, res) => {
   const { _id } = req.user;
   const { avatar } = req.body;
 
-  return User.findOneAndUpdate(_id, { avatar })
+  return User.findOneAndUpdate(_id, { avatar }, { new: true, runValidators: true })
     // .orFail()
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
