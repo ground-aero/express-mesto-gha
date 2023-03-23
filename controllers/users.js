@@ -17,7 +17,7 @@ const createUser = (req, res) => {
   const { name, about, avatar } = req.body; // получим из объекта req: имя,описание,аватар польз
   return User.create({ name, about, avatar }) // созд док на осн приш. данных.
     // Вернём записаные в базу данные
-    .then((user) => res.status(201).send({ data: user })) // В теле запроса на созд польз
+    .then((user) => res.send({ data: user })) // В теле запроса на созд польз
     // передайте JSON-объект с
     // данные не записались, вернём ошибку
     .catch((err) => {
