@@ -9,7 +9,7 @@ const {
 // 200 - success; 201 - success, resource created; 400 - not valid data; 401 - not authorised
 // 403 - authorised, no access; 404 - resource not found; 422 - unprocessable entity
 
-/** Создать пользователя - body: { name, about, avatar }
+/** Добавление пользователя без обяз поля avatar - body: { name, about, avatar }
  * @param req /users, POST method
  * @return {Promise}
  * */
@@ -17,7 +17,7 @@ const createUser = (req, res) => {
   const { name, about, avatar } = req.body; // получим из объекта req: имя,описание,аватар польз
   return User.create({ name, about, avatar }) // созд док на осн приш. данных.
     // Вернём записаные в базу данные
-    .then((user) => res.status(201).send(user)) // В теле запроса на созд польз
+    .then((user) => res.status(201).send({ data: user })) // В теле запроса на созд польз
     // передайте JSON-объект с
     // данные не записались, вернём ошибку
     .catch((err) => {
@@ -37,7 +37,7 @@ const updateProfileInfo = (req, res) => {
   const { _id } = req.user;
   const { name, about } = req.body;
 
-  return User.findByIdAndUpdate(_id, { name, about })
+  return User.findByIdAndUpdate(_id, { name, about }, { new: true })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
