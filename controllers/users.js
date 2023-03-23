@@ -11,29 +11,9 @@ const {
 // 200 - success; 201 - success, resource created; 400 - not valid data; 401 - not authorised
 // 403 - authorised, no access; 404 - resource not found; 422 - unprocessable entity
 
-/** Обработчик ответа сервера, при работе с пользователями
- * @param user
- * @param res
- */
-// const userResHandler = (user, res) => (
-//   user
-//     ? res.status(200).send({ data: user }) // ID пользака найден в БД, отправить пользователя
-//     : res.status(404).send({
-//     message: 'Пользователь с указанным _id не найден' }) // ID не найден в БД
-// );
-
-/** Обработчик ошибок, от сервера
- * @param err
- * @param res
- */
-// const serverErrHandler = (err, res) => (
-//   err.name === 'CastError' || err.name === 'ValidationError'
-//     ? res.status(400).send({ message: 'Переданы некорректные данные ' })
-//     : res.status(500).send({ message: 'Ошибка по умолчанию' })
-// );
-
 /** Создать пользователя - body: { name, about, avatar }
  * @param req /users, POST method
+ * @return {Promise}
  * */
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body; // получим из объекта req: имя,описание,аватар польз
