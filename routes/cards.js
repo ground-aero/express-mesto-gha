@@ -1,9 +1,8 @@
-// routes/ содержит описание основных роутов для пользователя и карточки.
+/** routes/ содержит описание основных роутов для пользователя и карточки. */
 const router = require('express').Router();
 const {
   getCards, createCard, deleteCard, likeCard, dislikeCard,
 } = require('../controllers/cards');
-// const Card = require('../models/card');
 
 /** 'cards' можем удалить, рут теперь работает относительно урла, а не всего приложения */
 /** Handle incoming @requests to /users */

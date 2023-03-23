@@ -1,9 +1,8 @@
-// директория routes/ содержит описание основных роутов для пользователя и карточки.
+/** директория routes/ содержит описание основных роутов для пользователя и карточки. */
 const router = require('express').Router();
 const {
   getUsers, getUserById, createUser, updateProfileInfo, updateAvatar,
 } = require('../controllers/users');
-// const User = require('../models/user');
 
 /** 'users' можем удалить, рут теперь работает относительно урла, а не всего приложения */
 router.get('/', getUsers); // возвр. всех польз-лей, 'users' можем удалять. 2-й аргумент это ф-ция контроллер.

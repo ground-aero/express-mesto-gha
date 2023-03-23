@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose').default;
 const bodyParser = require('body-parser');
+const morgan = require('morgan');
 const {
   ERR_CODE_404,
   ERR_CODE_500,
@@ -10,7 +11,6 @@ const {
 /** 1 */
 const { PORT = 3000 } = process.env;
 const app = express();
-const morgan = require('morgan');
 
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');

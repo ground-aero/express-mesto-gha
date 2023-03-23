@@ -1,4 +1,4 @@
-// директория models/ содержит файлы описания схем пользователя и карточки;
+/** директория models/ содержит файлы описания схем пользователя и карточки; */
 const mongoose = require('mongoose');
 
 const cardSchema = new mongoose.Schema({
@@ -16,9 +16,9 @@ const cardSchema = new mongoose.Schema({
   },
 
   owner: {
-    type: mongoose.Schema.Types.ObjectId, // будем хранить идентификатор ....???????? карточки
+    type: mongoose.Schema.Types.ObjectId, // сохран идентификатор карточки
     required: true,
-    ref: 'user', // ссылка на модель автора карточки ?????????????????????????????????
+    ref: 'user', // ссылка на модель автора карточки
   },
 
   likes: [ // список лайкнувших пост пользователей

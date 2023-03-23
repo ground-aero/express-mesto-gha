@@ -1,6 +1,4 @@
-// Контроллер создания карточки
-// const NotFoundErr = require('../errors/not-found-err');
-// const IncorrectDataErr = require('../errors/incorrect-data-err');
+/** Контроллер создания карточки */
 const Card = require('../models/card');
 const {
   ERR_CODE_400,
@@ -74,30 +72,29 @@ const deleteCard = (req, res) => {
  * @param res
  */
 const likeCard = (req, res) => {
-  const {cardId} = req.params;
-  const {_id} = req.user;
+  const { cardId } = req.params;
+  const { _id } = req.user;
 
   // добавить _id польз-ля в массив лайков, если его в нем нет
-  Card.findByIdAndUpdate(cardId, {$addToSet: {likes: _id}}, {new: true})
+  Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, { new: true })
     .orFail(new Error('idNotFoundError'))
-    .then((card) => res.send({data: card}))
+    .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'idNotFoundError') {
-        res.status(ERR_CODE_404).send({message: `Передан несуществующий _id карточки: ${err}`})
+        res.status(ERR_CODE_404).send({ message: `Передан несуществующий _id карточки: ${err}` });
         return;
       }
       if (err.name === 'CastError') {
-        res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные для постановки лайка' })
-      }
-      else {
-        res.status(ERR_CODE_500).send({message: `Ошибка сервера: ${err}`})
+        res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные для постановки лайка' });
+      } else {
+        res.status(ERR_CODE_500).send({ message: `Ошибка по умолчанию: ${err}` });
       }
     });
 };
 
 /** убрать лайк с карточки
  * @param req, /cards/:cardId/likes , DELETE method
- * @param res
+ * @param url: "http://localhost:3000/cards/641c0bc1dd5e92e6717d97bd/likes"
  */
 const dislikeCard = (req, res) => {
   const { cardId } = req.params;
@@ -105,9 +102,19 @@ const dislikeCard = (req, res) => {
 
   Card.findByIdAndUpdate(cardId, { $pull: { likes: _id } }, { new: true })
     // убрать _id из массива польз-ля
-    .orFail()
+    .orFail(new Error('idNotFoundError'))
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(500).send({ message: `Ошибка сервера: ${err}` }));
+    .catch((err) => {
+      if (err.name === 'idNotFoundError') {
+        err.status(ERR_CODE_404).send({ message: 'Передан несуществующий _id карточки' });
+        return;
+      }
+      if (err.name === 'CastError') {
+        res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные для снятии лайка' });
+      } else {
+        res.status(ERR_CODE_500).send({ message: `Ошибка по умолчанию ${err}` });
+      }
+    });
 };
 
 module.exports = {

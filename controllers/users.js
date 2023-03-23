@@ -1,7 +1,5 @@
-// Контроллер юзера
-// содержит файлы описания моделей пользователя и карточки;
-// const NotFoundErr = require('../errors/not-found-err');
-// const IncorrectDataErr = require('../errors/incorrect-data-err');
+/** Контроллер юзера
+/* содержит файлы описания моделей пользователя и карточки; */
 const User = require('../models/user');
 const {
   ERR_CODE_400,
@@ -53,28 +51,6 @@ const updateProfileInfo = (req, res) => {
       }
     });
 };
-// const updateProfileInfo = (req, res) => {
-//   const { _id } = req.user;
-//   const { name, about } = req.body;
-//
-//   return User.findByIdAndUpdate(_id, { name, about })
-//     .then((user) => {
-//       userResHandler(user, res); // обработчик ответа
-//     })
-//     .catch((err) => {
-//       serverErrHandler(err, res); // обработчик ошибок от сервера
-//     });
-// };
-// const updateProfileInfo = (req, res, next) => {
-//   const { _id } = req.user;
-//   const { name, about } = req.body;
-//
-//   return User.findByIdAndUpdate(_id, { name, about })
-//     .orFail()
-//     .then((user) => res.status(200).send({ data: user }))
-//     .catch((err) => res.status(500).send({
-//     message: `server error when updateProfileInfo: ${err}` }));
-// };
 
 /** Получить всех пользователей
  * @param req, /users, метод GET
