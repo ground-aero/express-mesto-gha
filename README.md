@@ -14,3 +14,7 @@
 
 `npm run start` — запускает сервер   
 `npm run dev` — запускает сервер с hot-reload
+
+#### При запуске приложение подключается к серверу mongo по адресу: mongodb://0.0.0.0:27017/mestodb ;
+
+#### Check-List: [https://code.s3.yandex.net/web-developer/checklists-pdf/new-program/checklist_13.pdf](https://code.s3.yandex.net/web-developer/checklists-pdf/new-program/checklist_13.pdf)

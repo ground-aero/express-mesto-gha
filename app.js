@@ -1,4 +1,4 @@
-// app.js включает основную логику сервера, запуск и подключение к базе данных;
+/** app.js включает основную логику сервера, запуск и подключение к базе данных; */
 const express = require('express');
 const mongoose = require('mongoose').default;
 const bodyParser = require('body-parser');
