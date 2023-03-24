@@ -38,7 +38,7 @@ const updateProfileInfo = (req, res) => {
   const { _id } = req.user;
   const { name, about } = req.body;
 
-  return User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
+  return User.findByIdAndUpdate(_id, { name, about }, { new: true })
     .orFail(new Error('idNotFoundError'))
     .then((user) => res.send({ data: user })) // res.status(200) добавл по дефолту
     .catch((err) => {
