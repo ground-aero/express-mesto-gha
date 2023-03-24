@@ -23,9 +23,9 @@ const createUser = (req, res) => {
     // данные не записались, вернём ошибку
     .catch((err) => {
       if (err.name === 'ValidationError') { // здесь написан верно!
-        res.status(ERR_CODE_400).send({ message: `Переданы некорректные данные при создании пользователя: ${err}` });
+        res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при создании пользователя' });
       } else {
-        res.status(ERR_CODE_500).send({ message: `Ошибка по умолчанию: ${err}` });
+        res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
       }
     });
 };
@@ -39,7 +39,7 @@ const updateProfileInfo = (req, res) => {
   const { name, about } = req.body;
 
   return User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
-    .then((user) => res.status(200).send({ data: user }))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
@@ -58,9 +58,9 @@ const updateProfileInfo = (req, res) => {
  * @param res
  */
 const getUsers = (req, res) => User.find({})
-  .then((users) => res.status(200).send({ data: users }))
-  .catch((err) => {
-    res.status(ERR_CODE_500).send({ message: `Ошибка по умолчанию: ${err}` });
+  .then((users) => res.send({ data: users })) // res.status(200) добавл по дефолту
+  .catch(() => {
+    res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
   });
 
 /** Получить пользователя по ID
@@ -78,13 +78,13 @@ const getUserById = (req, res) => {
         res.status(ERR_CODE_404).send({ message: 'Пользователь по указанному _id не найден' });
         return;
       }
-      res.status(200).send({ data: user });
+      res.send({ data: user }); // res.status(200) добавл по дефолту
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные' });
       } else {
-        res.status(ERR_CODE_500).send({ message: `Ошибка по умолчанию: ${err}` });
+        res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
       }
     });
 };
@@ -101,16 +101,16 @@ const updateAvatar = (req, res) => {
 
   return User.findOneAndUpdate(_id, { avatar }, { new: true, runValidators: true })
     // .orFail()
-    .then((user) => res.status(200).send({ data: user }))
+    .then((user) => res.send({ data: user })) // res.status(200) доб по дефолту
     .catch((err) => {
       if (err.name === 'CastError') {
         err.status(ERR_CODE_404).send({ message: 'Пользователь с указанным _id не найден' });
         return;
       }
       if (err.name === 'ValidationError') {
-        res.status(ERR_CODE_400).send({ message: `Переданы некорректные данные при обновлении аватара: ${err}` });
+        res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении аватара' });
       } else {
-        res.status(ERR_CODE_500).send({ message: `Ошибка по умолчанию: ${err}` });
+        res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
       }
     });
 };
