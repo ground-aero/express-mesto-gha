@@ -51,7 +51,7 @@ const deleteCard = (req, res) => {
   return Card.findByIdAndRemove(cardId)
     .then((card) => {
       if (card) {
-        res.send({ message: 'Карточка удалена' }); // res.status(200) доб по дефолту
+        res.send({ data: card, message: 'Карточка удалена' }); // res.status(200) доб по дефолту
       } else {
         res.status(ERR_CODE_404).send({ message: 'Карточка с указанным _id не найдена' });
       }
