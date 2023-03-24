@@ -39,17 +39,22 @@ const updateProfileInfo = (req, res) => {
   const { name, about } = req.body;
 
   return User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
-    .orFail(new Error('CastError'))
+    .orFail(new Error('IdNotFoundErr'))
     .then((user) => res.send({ data: user })) // res.status(200) добавл по дефолту
     .catch((err) => {
-      if (err.message === 'CastError') {
-        res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля (некорр id)' });
-      } else {
-        res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
+      if (err.message === 'IdNotFoundErr') {
+        res.status(ERR_CODE_404).send({ message: 'Пользователь с указанным _id не найден' });
+        return;
       }
-      // if (err.name === 'ValidationError') {
-      //   res.status(ERR_CODE_404).send({ message: 'Пользователь с указанным _id не найден' });
-      // }
+      if (err.name === 'CastError') {
+        res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+        return;
+      }
+      if (err.name === 'ValidationError') {
+        res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+        return;
+      }
+        res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
     });
 };
 
