@@ -54,7 +54,7 @@ const updateProfileInfo = (req, res) => {
         res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
         return;
       }
-        res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
+      res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
     });
 };
 
