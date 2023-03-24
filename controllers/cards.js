@@ -24,9 +24,9 @@ const createCard = (req, res) => {
     // данные не записались, вернём ошибку
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERR_CODE_400).send({ message: `Переданы некорректные данные при создании карточки` });
+        res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при создании карточки' });
       } else {
-        res.status(ERR_CODE_500).send({ message: `Ошибка по умолчанию` });
+        res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
       }
     });
 };
@@ -59,9 +59,9 @@ const deleteCard = (req, res) => {
     // .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERR_CODE_400).send({ message: `Переданы некорректные данные` });
+        res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные' });
       } else {
-        res.status(500).send({ message: `Ошибка по умолчанию` });
+        res.status(500).send({ message: 'Ошибка по умолчанию' });
       }
     });
 };
@@ -81,13 +81,13 @@ const likeCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.message === 'idNotFoundError') {
-        res.status(ERR_CODE_404).send({ message: `Передан несуществующий _id карточки` });
+        res.status(ERR_CODE_404).send({ message: 'Передан несуществующий _id карточки' });
         return;
       }
       if (err.name === 'CastError') {
         res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные для постановки лайка' });
       } else {
-        res.status(ERR_CODE_500).send({ message: `Ошибка по умолчанию` });
+        res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
       }
     });
 };

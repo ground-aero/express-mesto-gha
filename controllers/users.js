@@ -39,14 +39,20 @@ const updateProfileInfo = (req, res) => {
   const { name, about } = req.body;
 
   return User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
-    .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+    .then((user) => {
+      if (!user) { // обработка ошибки отсутствия данных
+        res.status(ERR_CODE_404).send({ message: 'Пользователь с указанным _id не найден' });
         return;
       }
+      res.send({ data: user }); // res.status(200) добавл по дефолту
+    })
+    .catch((err) => {
+      // if (err.name === 'ValidationError') {
+      //   res.status(ERR_CODE_404).send({ message: 'Пользователь с указанным _id не найден' });
+      //   return;
+      // }
       if (err.name === 'CastError') {
-        res.status(ERR_CODE_404).send({ message: 'Пользователь с указанным _id не найден' });
+        res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
       } else {
         res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
       }
@@ -99,15 +105,21 @@ const updateAvatar = (req, res) => {
   const { _id } = req.user;
   const { avatar } = req.body;
 
-  return User.findOneAndUpdate(_id, { avatar }, { new: true, runValidators: true })
+  return User.findByIdAndUpdate(_id, { avatar }, { new: true, runValidators: true })
     // .orFail()
-    .then((user) => res.send({ data: user })) // res.status(200) доб по дефолту
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        err.status(ERR_CODE_404).send({ message: 'Пользователь с указанным _id не найден' });
+    .then((user) => {
+      if (!user) {
+        res.status(ERR_CODE_404).send({ message: 'Пользователь с указанным _id не найден' });
         return;
       }
-      if (err.name === 'ValidationError') {
+      res.send({ data: user }); // res.status(200) доб по дефолту
+    })
+    .catch((err) => {
+      // if (err.name === 'ValidationError') {
+      //   res.status(ERR_CODE_404).send({ message: '' });
+      //   return;
+      // }
+      if (err.name === 'CastError') {
         res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении аватара' });
       } else {
         res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });

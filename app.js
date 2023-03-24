@@ -1,4 +1,4 @@
-/** app.js включает основную логику сервера, запуск и подключение к базе данных; */
+/** осн. логика сервера, запуск и подключение к БД */
 const express = require('express');
 const mongoose = require('mongoose').default;
 const bodyParser = require('body-parser');
@@ -41,8 +41,9 @@ app.use((req, res, next) => {
 app.use('/users', usersRouter); // запросы в корень будем матчить с путями которые прописали в руте юзеров
 app.use('/cards', cardsRouter);
 
-/** error handler - перед слушателем порта */
+/** error handler для роута неизвестного маршрута, должен отправить только ошибку с кодом 404 */
 app.all('*', (req, res, next) => {
+  res.status(ERR_CODE_404).send()
   if (res.status(404)) {
     res.status(ERR_CODE_404).send('сервер не может найти запрашиваемый маршрут/ресурс');
     return;
