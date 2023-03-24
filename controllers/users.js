@@ -114,10 +114,10 @@ const updateAvatar = (req, res) => {
       res.send({ data: user }); // res.status(200) доб по дефолту
     })
     .catch((err) => {
-      // if (err.name === 'ValidationError') {
-      //   res.status(ERR_CODE_404).send({ message: '' });
-      //   return;
-      // }
+      if (err.name === 'ValidationError') {
+        res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+        return;
+      }
       if (err.name === 'CastError') {
         res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении аватара' });
       } else {
