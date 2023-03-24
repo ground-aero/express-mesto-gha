@@ -2,6 +2,8 @@
 const express = require('express');
 const mongoose = require('mongoose').default;
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const morgan = require('morgan');
 const {
   ERR_CODE_404,
@@ -19,6 +21,18 @@ const cardsRouter = require('./routes/cards');
 app.use(bodyParser.json());
 // app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+/** защита от некоторых веб-уязвимостей */
+app.use(helmet());
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+// Apply the rate limiting middleware to all requests
+app.use(limiter);
 
 /** подключаемся к серверу mongo */
 mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {
