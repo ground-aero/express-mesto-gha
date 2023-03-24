@@ -74,7 +74,6 @@ const deleteCard = (req, res) => {
 const likeCard = (req, res) => {
   const { cardId } = req.params;
   const { _id } = req.user;
-
   // добавить _id польз-ля в массив лайков, если его в нем нет
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, { new: true })
     .orFail(new Error('idNotFoundError'))

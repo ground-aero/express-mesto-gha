@@ -47,10 +47,10 @@ const updateProfileInfo = (req, res) => {
       res.send({ data: user }); // res.status(200) добавл по дефолту
     })
     .catch((err) => {
-      // if (err.name === 'ValidationError') {
-      //   res.status(ERR_CODE_404).send({ message: 'Пользователь с указанным _id не найден' });
-      //   return;
-      // }
+      if (err.name === 'ValidationError') {
+        res.status(ERR_CODE_404).send({ message: 'Пользователь с указанным _id не найден' });
+        return;
+      }
       if (err.name === 'CastError') {
         res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
       } else {
