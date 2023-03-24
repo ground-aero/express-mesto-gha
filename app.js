@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const {
   ERR_CODE_404,
-  ERR_CODE_500,
 } = require('./errors/errors-codes');
 
 /** 1 */
@@ -43,15 +42,7 @@ app.use('/cards', cardsRouter);
 
 /** error handler для роута неизвестного маршрута, должен отправить только ошибку с кодом 404 */
 app.all('*', (req, res, next) => {
-  res.status(ERR_CODE_404).send()
-  if (res.status(404)) {
-    res.status(ERR_CODE_404).send('сервер не может найти запрашиваемый маршрут/ресурс');
-    return;
-  }
-  if (res.status(500)) {
-    res.status(ERR_CODE_500).send('ошибка сервера, по умолчанию');
-    return;
-  }
+  res.status(ERR_CODE_404).send('сервер не может найти запрашиваемый маршрут/ресурс');
   next();
 });
 
