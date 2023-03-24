@@ -40,13 +40,7 @@ const updateProfileInfo = (req, res) => {
 
   return User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
     .orFail(new Error('idNotFoundError'))
-    .then((user) => {
-      if (!user) { // обработка ошибки отсутствия данных
-        res.status(ERR_CODE_404).send({ message: 'Пользователь с указанным _id не найден' });
-        return;
-      }
-      res.send({ data: user }); // res.status(200) добавл по дефолту
-    })
+    .then((user) => res.send({ data: user })) // res.status(200) добавл по дефолту
     .catch((err) => {
       if (err.message === 'idNotFoundError') {
         res.status(ERR_CODE_404).send({ message: 'Пользователь с указанным _id не найден' });
