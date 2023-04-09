@@ -9,14 +9,13 @@ const {
 // 200 - success; 201 - success, resource created; 400 - not valid data; 401 - not authorised
 // 403 - authorised, no access; 404 - resource not found; 422 - unprocessable entity
 
-/** Добавление пользователя без обяз поля avatar - body: { name, about, avatar }
- * @param req /users, POST method
+/** @param req, POST /users
+ * Добавление пользователя без обяз поля avatar - body: { name, about, avatar }
  * @return {Promise}
  * */
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body; // получим из объекта req: имя,описание,аватар польз
-  return User.create({ name, about, avatar }) // созд док на осн приш. данных.
-
+  return User.create({ name, about, avatar }) // и вернем/созд док на осн приш. данных.
     // Вернём записаные в базу данные
     .then((user) => res.status(201).send({ data: user })) // В теле запроса на созд польз
     // передайте JSON-объект с
@@ -30,8 +29,8 @@ const createUser = (req, res) => {
     });
 };
 
-/** Обновить инфо о пользователе - body: { name, about }
- * @param req /users/me, PATCH method
+/** @param req, PATCH /users/me
+ * Обновить инфо о пользователе - body: { name, about }
  * user._id - user's ID
  * */
 const updateProfileInfo = (req, res) => {
@@ -58,8 +57,8 @@ const updateProfileInfo = (req, res) => {
     });
 };
 
-/** Получить всех пользователей
- * @param req, /users, метод GET
+/** @param req, GET /users
+ * Получить всех пользователей
  * @param res
  */
 const getUsers = (req, res) => User.find({})
@@ -68,8 +67,8 @@ const getUsers = (req, res) => User.find({})
     res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
   });
 
-/** Получить пользователя по ID
- * @param req - /users/:userId, params.userId - ID пользователя, метод GET
+/** @param req - GET /users/:userId,
+ * Получить пользователя по ID (params.userId - ID пользователя)
  * @param res
  */
 const getUserById = (req, res) => {
@@ -94,8 +93,8 @@ const getUserById = (req, res) => {
     });
 };
 
-/** Обновить аватар
- * @param req /users/me/avatar, PATCH method
+/** @param req, PATCH /users/me/avatar
+ * Обновить аватар
  * user._id - user ID
  * body: {avatar} - link
  * user._id - user's ID

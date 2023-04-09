@@ -1,5 +1,6 @@
 /** директория models/ содержит файлы описания схем пользователя и карточки; */
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const userSchema = new mongoose.Schema({ // определить поля для пользователя:
   name: {
@@ -17,6 +18,12 @@ const userSchema = new mongoose.Schema({ // определить поля для
   avatar: {
     type: String,
     required: true,
+  },
+  email: {
+    type: String,
+  },
+  password: {
+
   },
 });
 

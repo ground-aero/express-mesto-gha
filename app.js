@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose').default;
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
+const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const morgan = require('morgan');
 const {
@@ -10,20 +11,24 @@ const {
 } = require('./errors/errors-codes');
 
 /** 1 */
+console.log(process.env)
 const { PORT = 3000 } = process.env;
 const app = express();
 
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 
+/** подключаемся к серверу mongo */
+mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {
+  useNewUrlParser: true,
+});
+
 /** 2 */
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.json());
+app.use(cors({ origin: 'http://localhost:3000' })); // разрешил кросс-домейн реквесты с этого origin: 3000
+app.use(bodyParser.json()); // parse application/x-www-form-urlencoded
 // app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-/** защита от некоторых веб-уязвимостей */
-app.use(helmet());
+app.use(helmet()); // защита от некоторых веб-уязвимостей
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -33,12 +38,6 @@ const limiter = rateLimit({
 });
 // Apply the rate limiting middleware to all requests
 app.use(limiter);
-
-/** подключаемся к серверу mongo */
-mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {
-  useNewUrlParser: true,
-});
-
 app.use(morgan('dev'));
 
 // временное решение авторизации. мидлвэр
@@ -56,7 +55,7 @@ app.use('/cards', cardsRouter);
 
 /** error handler для роута неизвестного маршрута, должен отправить только ошибку с кодом 404 */
 app.all('*', (req, res) => {
-  res.status(ERR_CODE_404).send({ message: 'сервер не может найти запрашиваемый маршрут/ресурс' });
+  res.status(ERR_CODE_404).send({ message: 'Страница по указанному маршруту не найдена' });
 });
 
 /** 4 */
