@@ -2,13 +2,15 @@
 const router = require('express').Router();
 const {
   createUser,
+  register,
+  login,
   updateProfileInfo,
   getUsers,
   getUserById,
   updateAvatar,
 } = require('../controllers/users');
 
-/** 'users' можем удалить, рут теперь работает относительно урла, а не всего приложения */
+/** 'users' можем удалить, роут теперь работает относительно урла, а не всего приложения */
 router.get('/', getUsers); // возвр. всех польз-лей, 'users' можем удалять. 2-й аргумент это ф-ция контроллер.
 router.get('/:userId', getUserById); // возвращает пользователя по _id. 2-й аргумент -это ф-ция контроллер.
 

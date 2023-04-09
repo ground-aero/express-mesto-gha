@@ -14,8 +14,8 @@ const {
  * @return {Promise}
  * */
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body; // получим из объекта req: имя,описание,аватар польз
-  return User.create({ name, about, avatar }) // и вернем/созд док на осн приш. данных.
+  const { name, about, avatar, email, password } = req.body; // получим из объекта req: имя,описание,аватар польз
+  return User.create({ name, about, avatar, email, password }) // и вернем/созд док на осн приш. данных.
     // Вернём записаные в базу данные
     .then((user) => res.status(201).send({ data: user })) // В теле запроса на созд польз
     // передайте JSON-объект с
@@ -27,6 +27,16 @@ const createUser = (req, res) => {
         res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
       }
     });
+};
+
+// #PW-14
+// POST /auth/local/register
+const register = (req, res, next) => {
+  res.status(200).send({ message: "register Ok" })
+};
+
+const login = (req, res, next) => {
+  res.status(200).send({ message: "login Ok" })
 };
 
 /** @param req, PATCH /users/me
@@ -127,6 +137,8 @@ const updateAvatar = (req, res) => {
 
 module.exports = {
   createUser,
+  register,
+  login,
   updateProfileInfo,
   getUsers,
   getUserById,
