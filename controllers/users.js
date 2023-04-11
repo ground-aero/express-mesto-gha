@@ -1,5 +1,6 @@
 /** Контроллер юзера
 /* содержит файлы описания моделей пользователя и карточки; */
+const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const {
   ERR_CODE_400,
@@ -13,9 +14,24 @@ const {
  * Добавление пользователя без обяз поля avatar - body: { name, about, avatar }
  * @return {Promise}
  * */
+// POST /auth/local/register
 const createUser = (req, res) => {
-  const { name, about, avatar, email, password } = req.body; // получим из объекта req: имя,описание,аватар польз
-  return User.create({ name, about, avatar, email, password }) // и вернем/созд док на осн приш. данных.
+  const {
+    name,
+    about,
+    avatar,
+    email,
+    password,
+  } = req.body;
+  // получим из объекта req: имя,описание,аватар польз
+
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create(
+      {
+        name, about, avatar, email, password: hash,
+      },
+    ))
+    // и вернем/созд док на осн приш. данных.
     // Вернём записаные в базу данные
     .then((user) => res.status(201).send({ data: user })) // В теле запроса на созд польз
     // передайте JSON-объект с
@@ -30,14 +46,17 @@ const createUser = (req, res) => {
 };
 
 // #PW-14
+// POST /auth/local
+/** контроллер login, получает из запроса почту и пароль и проверяет их */
+const login = (req, res) => {
+const { email, password } = req.body;
+  res.status(200).send({ message: 'login Ok' });
+};
+// #PW-14
 // POST /auth/local/register
-const register = (req, res, next) => {
-  res.status(200).send({ message: "register Ok" })
-};
-
-const login = (req, res, next) => {
-  res.status(200).send({ message: "login Ok" })
-};
+// const register = (req, res, next) => {
+//   res.status(200).send({ message: "register Ok" })
+// };
 
 /** @param req, PATCH /users/me
  * Обновить инфо о пользователе - body: { name, about }
@@ -137,7 +156,6 @@ const updateAvatar = (req, res) => {
 
 module.exports = {
   createUser,
-  register,
   login,
   updateProfileInfo,
   getUsers,

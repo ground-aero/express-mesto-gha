@@ -7,17 +7,17 @@ const userSchema = new mongoose.Schema({ // определить поля для
     type: String,
     minlength: 2,
     maxlength: 30,
-    required: true,
+    default: 'Жак-Ив Кусто',
   },
   about: {
     type: String,
     minlength: 2,
     maxlength: 30,
-    required: true,
+    default: 'Исследователь',
   },
   avatar: {
     type: String,
-    required: true,
+    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
   },
   email: {
     type: String,
@@ -26,13 +26,13 @@ const userSchema = new mongoose.Schema({ // определить поля для
       validator(v) {
         return validator.isEmail(v);
       },
-      message: "поле email должно быть заполнено",
+      message: 'поле email должно быть валидным email-адресом',
     },
   },
   password: {
     type: String,
     required: true,
   },
-});
+}, { versionKey: false });
 
 module.exports = mongoose.model('user', userSchema);

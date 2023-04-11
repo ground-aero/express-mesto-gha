@@ -11,7 +11,7 @@ const {
 } = require('./errors/errors-codes');
 
 /** 1 */
-console.log(process.env)
+console.log(process.env);
 const { PORT = 3000 } = process.env;
 const app = express();
 
