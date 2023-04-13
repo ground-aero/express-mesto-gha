@@ -56,7 +56,7 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(email,
           }
           return user; // теперь user доступен
         });
-  });
+    });
 };
 
 module.exports = mongoose.model('user', userSchema);

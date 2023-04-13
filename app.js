@@ -9,14 +9,16 @@ const morgan = require('morgan');
 const {
   ERR_CODE_404,
 } = require('./errors/errors-codes');
-
 /** 1 */
-console.log(process.env);
 const { PORT = 3000 } = process.env;
 const app = express();
 
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
+const {
+  login,
+  createUser,
+} = require('./controllers/users');
 
 /** подключаемся к серверу mongo */
 mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {
@@ -39,7 +41,6 @@ const limiter = rateLimit({
 // Apply the rate limiting middleware to all requests
 app.use(limiter);
 app.use(morgan('dev'));
-
 // временное решение авторизации. мидлвэр
 app.use((req, res, next) => {
   req.user = { // Она добавляет в каждый запрос объект user.
@@ -48,12 +49,14 @@ app.use((req, res, next) => {
   };
   next();
 });
-
 /** 3 Routes which handling requests */
 app.use('/users', usersRouter); // запросы в корень будем матчить с путями которые прописали в руте юзеров
 app.use('/cards', cardsRouter);
-
 /** error handler для роута неизвестного маршрута, должен отправить только ошибку с кодом 404 */
+// обработчики POST-запросов на роуты: '/signin' и '/signup'
+app.post('/signin', login);
+app.post('/signup', createUser);
+
 app.all('*', (req, res) => {
   res.status(ERR_CODE_404).send({ message: 'Страница по указанному маршруту не найдена' });
 });
