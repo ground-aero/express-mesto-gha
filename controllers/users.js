@@ -1,9 +1,11 @@
 /** Контроллер юзера
 /* содержит файлы описания моделей пользователя и карточки; */
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const {
   ERR_CODE_400,
+  ERR_CODE_401,
   ERR_CODE_404,
   ERR_CODE_500,
 } = require('../errors/errors-codes');
@@ -49,8 +51,27 @@ const createUser = (req, res) => {
 // POST /auth/local
 /** контроллер login, получает из запроса почту и пароль и проверяет их */
 const login = (req, res) => {
-const { email, password } = req.body;
-  res.status(200).send({ message: 'login Ok' });
+  const { email, password } = req.body;
+  User.findUserByCredentials(email, password)
+    .then((user) => { // аутентификация успешна! пользователь в переменной user
+      // вызовем метод jwt.sign, чтобы создать токен, и передадим 2 аргумента:
+      // пейлоуд токена и секретный ключ подписи:
+      const token = jwt.sign(
+        { _id: user._id },
+        'some-secret-key',
+        { expiresIn: '7d' });
+      // cookies
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+        sameSite: true
+      });
+      res.send({ token }); // вернем токен
+    })
+    .catch((err) => {
+      // ошибка аутентификации
+      res.status(ERR_CODE_401).send({ message: err.message });
+    });
 };
 // #PW-14
 // POST /auth/local/register
