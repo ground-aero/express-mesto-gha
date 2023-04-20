@@ -1,11 +1,11 @@
 /** Контроллер юзера
 /* содержит файлы описания моделей пользователя и карточки; */
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const bcrypt = require('bcrypt');
 const {
   ERR_CODE_400,
-  ERR_CODE_401,
+  // ERR_CODE_401,
   ERR_CODE_404,
   ERR_CODE_500,
 } = require('../errors/errors-codes');
@@ -17,6 +17,7 @@ const {
  * @return {Promise}
  * */
 // POST /auth/local/register
+// POST /signup
 const createUser = (req, res) => {
   const {
     name,
@@ -49,31 +50,53 @@ const createUser = (req, res) => {
 
 // #PW-14
 // POST /auth/local
+// POST /signin
 /** контроллер login, получает из запроса почту и пароль и проверяет их */
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
-  User.findUserByCredentials(email, password)
-    .then((user) => { // аутентификация успешна! пользователь в переменной user
-      // вызовем метод jwt.sign, чтобы создать токен, и передадим 2 аргумента:
-      // пейлоуд токена и секретный ключ подписи:
-      const token = jwt.sign(
-        { _id: user._id },
-        'some-secret-key',
-        { expiresIn: '7d' },
-      );
-      // cookies
-      res.cookie('jwt', token, {
-        maxAge: 3600000 * 24 * 7,
-        httpOnly: true,
-        sameSite: true,
-      });
-      res.send({ token }); // вернем токен
-    })
-    .catch((err) => {
-      // ошибка аутентификации
-      res.status(ERR_CODE_401).send({ message: err.message });
-    });
+  // ToDo: 1)find user, 2)check pass.., 3)return jwt & user
+  User
+    .findOne({ email })
+    .orFail(() => res.status(404).send({ message: 'Пользователь не найден* *' }))
+    // вызвали у библиоткеи compare - асинхронная. сравнили 2 пароля
+    .then((user) => bcrypt.compare(password, user.password).then((matched) => {
+      if (matched) {
+        return user;
+      }
+      return res.status(404).send({ message: 'Пользователь или пароль не найден.' });
+    }))
+    .then((user) => res.send(user))
+    .catch(next);
+  // сгенерить jwt токен и вепрнуть его
 };
+
+// const login = (req, res, next) => {
+//   const { email, password } = req.body;
+//   // ToDo: 1)find user, 2)check pass.., 3)return jwt and user
+//   User.findUserByCredentials(email, password)
+//     .then((user) => { // аутентификация успешна! пользователь в переменной user
+//       // вызовем метод jwt.sign, чтобы создать токен, и передадим 2 аргумента:
+//       // пейлоуд токена и секретный ключ подписи:
+//       const token = jwt.sign(
+//         { _id: user._id },
+//         'some-secret-key',
+//         { expiresIn: '7d' },
+//       );
+//       // cookie
+//       res.cookie('jwt', token, {
+//         maxAge: 3600000 * 24 * 7,
+//         httpOnly: true,
+//         sameSite: true,
+//       });
+//       res.send({ token }); // вернем токен
+//     })
+//     .catch((err) => {
+//       // ошибка аутентификации
+//
+//       res.status(ERR_CODE_401).send({ message: err.message });
+//     });
+// };
+
 // #PW-14
 // POST /auth/local/register
 // const register = (req, res, next) => {
