@@ -3,6 +3,7 @@
 // const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const jsonwebtoken = require('jsonwebtoken');
 const {
   ERR_CODE_400,
   // ERR_CODE_401,
@@ -57,15 +58,19 @@ const login = (req, res, next) => {
   // ToDo: 1)find user, 2)check pass.., 3)return jwt & user
   User
     .findOne({ email })
-    .orFail(() => res.status(404).send({ message: 'Пользователь не найден* *' }))
+    .orFail(() => res.status(404).send({ message: 'Пользователь или пароль не найден *' }))
     // вызвали у библиоткеи compare - асинхронная. сравнили 2 пароля
     .then((user) => bcrypt.compare(password, user.password).then((matched) => {
       if (matched) {
         return user;
       }
-      return res.status(404).send({ message: 'Пользователь или пароль не найден.' });
+      return res.status(404).send({ message: 'Пользователь или пароль не найден **' });
     }))
-    .then((user) => res.send(user))
+    .then((user) => {
+      // юзаем библиотеку jsonwebtoken, методом sign создали JWT (внутрь котор записали _id)
+      const jwt = jsonwebtoken.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      res.send({ user, jwt })
+    })
     .catch(next);
   // сгенерить jwt токен и вепрнуть его
 };
