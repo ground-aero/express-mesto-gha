@@ -4,6 +4,7 @@ const {
   updateProfileInfo,
   getUsers,
   getUserById,
+  getCurrentUser,
   updateAvatar,
 } = require('../controllers/users');
 
@@ -13,11 +14,12 @@ const {
 // с тремя полями: name,about, avatar
 // router.post('auth/local', login); // - здесь не нужен !??
 
-router.patch('/me', updateProfileInfo); // PATCH /users/me — обновляет профиль */
-router.patch('/me/avatar', updateAvatar); // PATCH /users/me/avatar — обновляет аватар
-
+router.get('/me', getCurrentUser); // PW-14 - возвращает текушего пользователя
 router.get('/', getUsers); // возвр. всех польз-лей, 'users' можем удалять. 2-й аргумент это ф-ция контроллер.
 router.get('/:userId', getUserById); // возвращает пользователя по _id. 2-й аргумент -это ф-ция контроллер.
+
+router.patch('/me', updateProfileInfo); // PATCH /users/me — обновляет профиль */
+router.patch('/me/avatar', updateAvatar); // PATCH /users/me/avatar — обновляет аватар
 
 /** экспортируем сущность которая внутри данного файла. Он отвечает только за юзера (!) */
 module.exports = router;

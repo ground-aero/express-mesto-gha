@@ -172,11 +172,38 @@ const getUserById = (req, res) => {
     });
 };
 
-/** @param req, PATCH /users/me/avatar
- * Обновить аватар
- * user._id - user ID
- * body: {avatar} - link
+// #14 - GET /users/me - возвращает информацию о текущем пользователе
+const getCurrentUser = (req, res, next) => {
+  // ToDo: check token, getUser from DB, return username & email
+  const { authorization } = req.headers;
+  if (!authorization || !authorization.startsWith('Bearer')) {
+    res.status(401).send({ message: 'Необходима авторизация' });
+  }
+  // должны получить токен из authorization хедера:
+  let payload;
+  const jwt = authorization.replace('Bearer ', ''); // вырезаем 'Bearer ' из authorization хедера,
+  // тем самым получаем jwt в чистом виде
+  // Проверить, валиден ли токен/jwt:
+  try {
+    payload = jsonwebtoken.verify(jwt, 'some-secret-key')
+    // res.send(payload); // в payload хранится: _id, iat,exp
+  } catch (err) {
+    res.status(401).send({ message: 'Необходима авторизация' });
+  }
+
+  // Залезть в BD и получить пользователя
+  User
+    .findById(payload._id)
+    .orFail(() => res.status(404).send({ message: 'Пользователь не найден' }))
+    .then((user) => res.send(user))
+    .catch(next);
+  // res.status(200).send({ message: 'getCurrentUser Ok' });
+}
+
+
+/** @param req, PATCH /users/me/avatar  - Обновить аватар
  * user._id - user's ID
+ * body: {avatar} - link
  * */
 const updateAvatar = (req, res) => {
   const { _id } = req.user;
@@ -210,5 +237,6 @@ module.exports = {
   updateProfileInfo,
   getUsers,
   getUserById,
+  getCurrentUser,
   updateAvatar,
 };
