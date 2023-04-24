@@ -1,7 +1,7 @@
 /** директория models/ содержит файлы описания схем пользователя и карточки; */
 const mongoose = require('mongoose');
 const validator = require('validator');
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({ // определить поля для пользователя:
   name: {

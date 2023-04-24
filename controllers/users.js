@@ -1,9 +1,8 @@
 /** Контроллер юзера
 /* содержит файлы описания моделей пользователя и карточки; */
-// const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const User = require('../models/user');
 const {
   ERR_CODE_400,
   // ERR_CODE_401,
@@ -69,7 +68,7 @@ const login = (req, res, next) => {
     .then((user) => {
       // юзаем библиотеку jsonwebtoken, методом sign создали JWT (внутрь котор записали _id)
       const jwt = jsonwebtoken.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res.send({ user, jwt })
+      res.send({ user, jwt });
     })
     .catch(next);
   // сгенерить jwt токен и вепрнуть его
@@ -140,11 +139,20 @@ const updateProfileInfo = (req, res) => {
  * Получить всех пользователей
  * @param res
  */
-const getUsers = (req, res) => User.find({})
+const getUsers = (req, res, next) => User.find({})
   .then((users) => res.send({ data: users })) // res.status(200) добавл по дефолту
-  .catch(() => {
-    res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
-  });
+  .catch(next);
+// .catch(() => {
+//   res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
+// });
+// const getUsers = async (req, res, next) => {
+//   try {
+//     const users = await User.find({});
+//     res.send({ data: users });
+//   } catch (err) {
+//     next(err);
+//   }
+// };
 
 /** @param req - GET /users/:userId,
  * Получить пользователя по ID (params.userId - ID пользователя)
@@ -185,7 +193,7 @@ const getCurrentUser = (req, res, next) => {
   // тем самым получаем jwt в чистом виде
   // Проверить, валиден ли токен/jwt:
   try {
-    payload = jsonwebtoken.verify(jwt, 'some-secret-key')
+    payload = jsonwebtoken.verify(jwt, 'some-secret-key');
     // res.send(payload); // в payload хранится: _id, iat,exp
   } catch (err) {
     res.status(401).send({ message: 'Необходима авторизация' });
@@ -198,8 +206,7 @@ const getCurrentUser = (req, res, next) => {
     .then((user) => res.send(user))
     .catch(next);
   // res.status(200).send({ message: 'getCurrentUser Ok' });
-}
-
+};
 
 /** @param req, PATCH /users/me/avatar  - Обновить аватар
  * user._id - user's ID
