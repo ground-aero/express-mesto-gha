@@ -11,7 +11,7 @@ const auth = (req, res, next) => {
   // 1.достать 'Bearer' из хедера авторизации, проверять authorization
   const { authorization } = req.headers;
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    throw new AuthoErr('Необходима авторизация *-');
+    throw new AuthoErr('Необходима авторизация *');
     // res.status(401).send({ message: 'Требуется авторизация' });
   }
 
@@ -22,10 +22,9 @@ const auth = (req, res, next) => {
   try {
     payload = jsonwebtoken.verify(jwt, 'some-secret-key');
   } catch (err) {
-    throw new AuthoErr('Необходима авторизация *-');
+    throw new AuthoErr('Необходима авторизация **');
     // res.status(401).send({ message: 'Необходима авторизация' });
   }
-
   // добавить пейлоуд токена в объект запроса юзера
   req.user = payload;
   // 3.если все хорошо -> иди дальше 'go next' (пропустить запрос)

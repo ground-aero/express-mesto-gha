@@ -41,14 +41,7 @@ const limiter = rateLimit({
 // Apply the rate limiting middleware to all requests
 app.use(limiter);
 app.use(morgan('dev'));
-// временное решение авторизации. мидлвэр
-app.use((req, res, next) => {
-  req.user = { // Она добавляет в каждый запрос объект user.
-    // Берите из него идентификатор пользователя в контроллере создания карточки.
-    _id: '64365d08cf9e289673d15be4', // вставьте _id созданного в предыдущем пункте пользователя
-  };
-  next();
-});
+
 /** 3 Routes which handling requests */
 app.use('/users', usersRouter); // запросы в корень будем матчить с путями которые прописали в руте юзеров
 app.use('/cards', cardsRouter);

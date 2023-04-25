@@ -15,11 +15,12 @@ const auth = require('../middlewares/auth');
 // с тремя полями: name,about, avatar
 // router.post('auth/local', login); // - здесь не нужен !??
 
-// router.use(auth);
-router.get('/', auth, getUsers); // возвр. всех польз-лей, 'users' можем удалять. 2-й аргумент это ф-ция контроллер.
-router.get('/:userId', getUserById); // возвращает пользователя по _id. 2-й аргумент -это ф-ция контроллер.
 router.get('/me', getCurrentUser); // PW-14 - возвращает инфо о текущем пользователе.
 // в '/me' итак передается authorization header, поэтому не нужно 2-й раз его защищать
+
+router.use(auth); // 7. Защита авторизацией всех остальных роутов
+router.get('/', getUsers); // возвр. всех польз-лей, 'users' можем удалять. 2-й аргумент это ф-ция контроллер.
+router.get('/:userId', getUserById); // возвращает пользователя по _id. 2-й аргумент -это ф-ция контроллер.
 
 router.patch('/me', updateProfileInfo); // PATCH /users/me — обновляет профиль */
 router.patch('/me/avatar', updateAvatar); // PATCH /users/me/avatar — обновляет аватар
