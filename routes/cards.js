@@ -1,16 +1,17 @@
-/** routes/ содержит описание основных роутов для пользователя и карточки. */
+/** routes/ для cards содержит описание основных роутов для карточки. */
 const router = require('express').Router();
 const {
-  getCards, createCard, deleteCard, likeCard, dislikeCard,
+  createCard, getCards, deleteCard, likeCard, dislikeCard,
 } = require('../controllers/cards');
+const auth = require('../middlewares/auth');
 
 /** 'cards' можем удалить, рут теперь работает относительно урла, а не всего приложения */
 /** Handle incoming @requests to /users */
 router.get('/', getCards); // возвр. все карточки, 'cards' можем удалять. 2-й аргумент это ф-ция контроллер.
-// router.get('/:userId', getUser); // возвращ польз по _id. 2-й аргум -это ф-ция контроллер.
 // создаёт карточку
-router.post('/', createCard); // В теле запроса на создание карточки перед JSON-объект с полями: name, link
-router.delete('/:cardId', deleteCard);
+router.post('/', auth, createCard); // В теле запроса на создание карточки перед JSON-объект с полями: name, link
+// router.get('/:userId', getUser); // возвращ польз по _id. 2-й аргум -это ф-ция контроллер.
+router.delete('/:cardId', auth, deleteCard); // 9. Проконтр. права. Нельзя удал карт др польз-лей
 // PUT /cards/:cardId/likes — поставить лайк карточке
 router.put('/:cardId/likes', likeCard);
 // DELETE /cards/:cardId/likes — убрать лайк с карточки

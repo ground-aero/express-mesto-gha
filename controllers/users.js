@@ -139,9 +139,11 @@ const updateProfileInfo = (req, res) => {
  * Получить всех пользователей
  * @param res
  */
-const getUsers = (req, res, next) => User.find({})
-  .then((users) => res.send({ data: users })) // res.status(200) добавл по дефолту
-  .catch(next);
+const getUsers = (req, res, next) => {
+  User.find({})
+    .then((users) => res.send({ data: users })) // res.status(200) добавл по дефолту
+    .catch(next);
+};
 // .catch(() => {
 //   res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
 // });

@@ -9,6 +9,7 @@ const morgan = require('morgan');
 const {
   ERR_CODE_404,
 } = require('./errors/errors-codes');
+const NotFoundErr = require('./errors/not-found-err');
 /** 1 */
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -42,6 +43,15 @@ const limiter = rateLimit({
 app.use(limiter);
 app.use(morgan('dev'));
 
+// временное решение авторизации. мидлвэр
+// app.use((req, res, next) => {
+//   req.user = { // Она добавляет в каждый запрос объект user.
+//     // Берите из него идентификатор пользователя в контроллере создания карточки.
+//     _id: '641759709a112c44444a1355', // вставьте _id созданного в предыдущем пункте пользователя
+//   };
+//   next();
+// });
+
 /** 3 Routes which handling requests */
 app.use('/users', usersRouter); // запросы в корень будем матчить с путями которые прописали в руте юзеров
 app.use('/cards', cardsRouter);
@@ -50,8 +60,12 @@ app.use('/cards', cardsRouter);
 app.post('/signin', login);
 app.post('/signup', createUser);
 
-app.all('*', (req, res) => {
-  res.status(ERR_CODE_404).send({ message: 'Страница по указанному маршруту не найдена' });
+// app.all('*', (req, res) => {
+//   res.status(ERR_CODE_404).send({ message: 'Страница по указанному маршруту не найдена' });
+// });
+/** Любые маршруты не подходящие под созданные роуты, вызовут 404 статус */
+app.use((req, res, next) => {
+  next(new NotFoundErr(ERR_CODE_404));
 });
 
 /** 4 */

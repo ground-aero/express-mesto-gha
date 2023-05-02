@@ -2,25 +2,23 @@
 const mongoose = require('mongoose');
 
 const cardSchema = new mongoose.Schema({
-
+  // _id: mongoose.Schema.Types.ObjectId,
   name: {
     type: String,
     minlength: [2, 'minimal length is 2 symbols...'],
     maxlength: [30, 'maximum length is 30 symbols...'],
     required: true,
   },
-
   link: {
     type: String,
     required: true,
   },
-
+  /** создаём поле owner */
   owner: {
     type: mongoose.Schema.Types.ObjectId, // сохран идентификатор карточки
-    required: true,
     ref: 'user', // ссылка на модель автора карточки
+    required: true,
   },
-
   likes: [ // список лайкнувших пост пользователей
     {
       type: mongoose.Schema.Types.ObjectId, // массив ObjectId
@@ -28,7 +26,6 @@ const cardSchema = new mongoose.Schema({
       ref: 'user',
     },
   ],
-
   createdAt: {
     type: Date,
     default: Date.now,

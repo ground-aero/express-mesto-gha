@@ -12,12 +12,16 @@ const {
  * @return {Promise}
  */
 const createCard = (req, res) => {
-  // console.log(req.user._id);// _id станет доступен. Мы захардкодили идентификатор пользователя,
+  // console.log(req.user._id); // _id станет доступен. Мы захардкодили идентификатор пользователя,
   // кто бы ни создал карточку, в базе у неё будет один и тот же автор
   const { name, link } = req.body;
-  const owner = req.user._id;
+  const ownerId = req.user._id;
+  // const { _id } = req.user._id;
+  // console.log(_id);
+  // const { user } = req.body;
 
-  return Card.create({ name, link, owner }) // созд док на осн приш. данных.
+  return Card.create({ name, link, owner: ownerId }) // этот идентификатор записыв в поле owner
+    // при создании новой карточки
     // Вернём записаные в базу данные
     .then((card) => res.status(201).send({ data: card })) // В теле запроса на созд карточки
     // передайте JSON-объект с
@@ -35,9 +39,12 @@ const createCard = (req, res) => {
  * @param req, /cards, метод GET
  * @param res
  */
-const getCards = (req, res) => Card.find({})
-  .then((cards) => res.send({ data: cards })) // res.status(200) добавл по дефолту
-  .catch(() => res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
+const getCards = (req, res) => {
+  return Card.find({})
+    .populate(['owner', 'likes']) // достанем поле owner, и поле likes
+    .then((cards) => res.send({ data: cards })) // res.status(200) добавл по дефолту
+    .catch(() => res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' }));
+};
 
 /** Удаляет карточку
  * @param req, /cards/:cardId — удаляет карточку по идентификатору, метод DELETE
@@ -47,8 +54,10 @@ const getCards = (req, res) => Card.find({})
  */
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
+  // const owner = req.owner._id;
 
   return Card.findByIdAndRemove(cardId)
+    .populate('owner')
     .then((card) => {
       if (card) {
         res.send({ data: card, message: 'Карточка удалена' }); // res.status(200) доб по дефолту
@@ -65,6 +74,27 @@ const deleteCard = (req, res) => {
       }
     });
 };
+// const deleteCard = (req, res) => {
+//   const { cardId } = req.params;
+//
+//   return Card.findByIdAndRemove(cardId)
+//     .populate(['owner', 'likes'])
+//     .then((card) => {
+//       if (card) {
+//         res.send({ data: card, message: 'Карточка удалена' }); // res.status(200) доб по дефолту
+//       } else {
+//         res.status(ERR_CODE_404).send({ message: 'Карточка с указанным _id не найдена' });
+//       }
+//     })
+//     // .then((card) => res.send({ data: card }))
+//     .catch((err) => {
+//       if (err.name === 'CastError') {
+//         res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные' });
+//       } else {
+//         res.status(500).send({ message: 'Ошибка по умолчанию' });
+//       }
+//     });
+// };
 
 /** поставить лайк карточке
  * @param req, /cards/:cardId/likes , PUT method
@@ -117,5 +147,5 @@ const dislikeCard = (req, res) => {
 };
 
 module.exports = {
-  getCards, createCard, deleteCard, likeCard, dislikeCard,
+  createCard, getCards, deleteCard, likeCard, dislikeCard,
 };
