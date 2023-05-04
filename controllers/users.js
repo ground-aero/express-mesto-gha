@@ -142,6 +142,9 @@ const updateProfileInfo = (req, res) => {
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users })) // res.status(200) добавл по дефолту
+    // .then((users) => {
+    //   console.log(users, req.user);
+    // })
     .catch(next);
 };
 // .catch(() => {

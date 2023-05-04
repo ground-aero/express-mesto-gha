@@ -4,6 +4,7 @@ const validator = require('validator');
 // const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({ // определить поля для пользователя:
+  // _id: mongoose.Schema.Types.ObjectId,
   name: {
     type: String,
     minlength: [2, 'Min length of "name" is - 2 symbols'],

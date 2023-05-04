@@ -20,6 +20,7 @@ const {
   login,
   createUser,
 } = require('./controllers/users');
+const errorsHandler = require('./errors/errors-handler');
 
 /** подключаемся к серверу mongo */
 mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {
@@ -28,9 +29,9 @@ mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {
 
 /** 2 */
 app.use(cors({ origin: 'http://localhost:3000' })); // разрешил кросс-домейн реквесты с этого origin: 3000
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json()); // parse application/x-www-form-urlencoded
 // app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet()); // защита от некоторых веб-уязвимостей
 
 const limiter = rateLimit({
@@ -67,6 +68,16 @@ app.post('/signup', createUser);
 app.use((req, res, next) => {
   next(new NotFoundErr(ERR_CODE_404));
 });
+app.use((error, req, res, next) => {
+  res.status(error.status || 500);
+  res.json({
+    error: {
+      message: error.message,
+    },
+  });
+  next();
+});
+app.use(errorsHandler);
 
 /** 4 */
 app.listen(PORT, () => {
