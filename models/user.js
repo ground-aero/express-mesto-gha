@@ -35,6 +35,7 @@ const userSchema = new mongoose.Schema({ // определить поля для
   password: {
     type: String,
     required: true,
+    select: false, // Так по умолчанию хеш пароля польз-ля не будет возвращаться из базы
   },
 }, { versionKey: false });
 

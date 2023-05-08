@@ -38,7 +38,8 @@ const createCard = (req, res) => {
     });
 };
 // const createCard = (req, res) => {
-//   // console.log(req.user._id); // _id станет доступен. Мы захардкодили идентификатор пользователя,
+//   // console.log(req.user._id); // _id станет доступен.
+//   Мы захардкодили идентификатор пользователя,
 //   // кто бы ни создал карточку, в базе у неё будет один и тот же автор
 //   const { name, link } = req.body;
 //   const ownerId = req.user._id;
@@ -54,7 +55,8 @@ const createCard = (req, res) => {
 //     // данные не записались, вернём ошибку
 //     .catch((err) => {
 //       if (err.name === 'ValidationError') {
-//         res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при создании карточки' });
+//         res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные
+//         при создании карточки' });
 //       } else {
 //         res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
 //       }
@@ -86,7 +88,7 @@ const deleteCard = (req, res, next) => {
         return next(new ForbiddenErr('Нельзя удалить чужую карточку!'));
       } else {
         return card.deleteOne()
-          .then(() => res.send({ data: card }))
+          .then(() => res.send({ data: card }));
       }
     })
     .catch((err) => {
@@ -96,7 +98,6 @@ const deleteCard = (req, res, next) => {
         next(err);
       }
     });
-
 };
 // const deleteCard = (req, res) => {
 //   const { cardId } = req.params;
@@ -148,7 +149,8 @@ const likeCard = (req, res, next) => {
 //     return;
 //   }
 //   if (err.name === 'CastError') {
-//     res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные для постановки лайка' });
+//     res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные
+//     для постановки лайка' });
 //   } else {
 //     res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
 //   }

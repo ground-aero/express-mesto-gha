@@ -4,6 +4,6 @@ const errorsHandler = (err, req, res, next) => {
   const message = statusCode === 500 ? 'Произошла ошибка на сервере' : err.message;
   res.status(statusCode).send({ message });
   next();
-}
+};
 
 module.exports = errorsHandler;

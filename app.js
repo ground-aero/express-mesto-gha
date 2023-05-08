@@ -20,7 +20,7 @@ const {
   login,
   createUser,
 } = require('./controllers/users');
-const errorsHandler = require('./errors/errors-handler');
+const errorsHandler = require('./middlewares/errors-handler');
 
 /** подключаемся к серверу mongo */
 mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {

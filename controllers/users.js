@@ -56,7 +56,7 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   // ToDo: 1)find user, 2)check pass.., 3)return jwt & user
   User
-    .findOne({ email })
+    .findOne({ email }).select('+password')// => тогда далее в объекте user будет хеш пароля
     .orFail(() => res.status(404).send({ message: 'Пользователь или пароль не найден *' }))
     // вызвали у библиоткеи compare - асинхронная. сравнили 2 пароля
     .then((user) => bcrypt.compare(password, user.password).then((matched) => {
@@ -142,22 +142,8 @@ const updateProfileInfo = (req, res) => {
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users })) // res.status(200) добавл по дефолту
-    // .then((users) => {
-    //   console.log(users, req.user);
-    // })
     .catch(next);
 };
-// .catch(() => {
-//   res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
-// });
-// const getUsers = async (req, res, next) => {
-//   try {
-//     const users = await User.find({});
-//     res.send({ data: users });
-//   } catch (err) {
-//     next(err);
-//   }
-// };
 
 /** @param req - GET /users/:userId,
  * Получить пользователя по ID (params.userId - ID пользователя)
