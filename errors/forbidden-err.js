@@ -1,3 +1,4 @@
+// когда пользователь пытается удалить карточку которая ему не принадлежит
 class ForbiddenErr extends Error {
   constructor(message = 'Access is Forbidden') {
     super(message);

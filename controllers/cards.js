@@ -6,7 +6,8 @@ const {
   ERR_CODE_500,
 } = require('../errors/errors-codes');
 const NotFoundErr = require('../errors/not-found-err');
-const ForbiddenErr = require('../errors/forbiddenErr');
+const ForbiddenErr = require('../errors/forbidden-err');
+const BadRequestErr = require('../errors/bad-req-err');
 
 /** Создает карточку | {name - имя изображ, link - ссылка}
  * @param req, /cards, метод POST
@@ -78,50 +79,71 @@ const getCards = (req, res) => Card.find({})
  * url: "http://localhost:3000/cards/63f51181c8aa784600ac5693"
  * @param res
  */
-const deleteCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   const { cardId } = req.params; // extract ID from URL
-  // const owner = req.owner._id;
-  const id = req.user._id;
   Card.findById(cardId)
-    // .populate('owner', '_id')
-    .orFail(() => {
-      const error = new Error('Карточка по заданному ID отсутствует в Базе');
-      error.statusCode = 404;
-      return error;
-    })
+    .orFail(() => new NotFoundErr('Нет карточки по заданному ID'))
     .then((card) => {
-      console.log(card);
-      if (card.owner.toString() !== id) {
-        throw new ForbiddenErr({ message: 'Нет прав на удаление карточки' });
+      if (card.owner.toString() !== req.user._id) {
+        return next(new ForbiddenErr('Нельзя удалить чужую карточку!'));
+      } else {
+        return card.deleteOne()
+          .then(() => res.send({ data: card }))
       }
-      Card.findByIdAndDelete(cardId)
-        .then((cardDeleted) => {
-          res.send({ data: cardDeleted });
-        })
-        .catch(err => {
-          if (err.name === 'CastError') {
-            res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные' });
-          } else {
-            res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
-          }
-        })
     })
     .catch((err) => {
-      if (err.statusCode === 404) {
-        res.status(ERR_CODE_404).send({ message: 'Карточка с указанным ID не найдена' });
-        return;
+      if (err.kind === 'ObjectId') {
+        next(new BadRequestErr('Невалидный ID карточки'));
+      } else {
+        next(err);
       }
-      if (err.name === 'CastError') {
-        res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
-        return;
-      }
-      if (err.name === 'ValidationError') {
-        res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
-        return;
-      }
-      res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
     })
 
+};
+// const deleteCard = (req, res) => {
+//   const { cardId } = req.params; // extract ID from URL
+//   // const owner = req.owner._id;
+//   const id = req.user._id;
+//   Card.findById(cardId)
+//     // .populate('owner', '_id')
+//     .orFail(() => {
+//       const error = new Error('Карточка по заданному ID отсутствует в Базе');
+//       error.statusCode = 404;
+//       return error;
+//     })
+//     .then((card) => {
+//       console.log(card);
+//       if (card.owner.toString() !== id) {
+//         throw new ForbiddenErr({ message: 'Нет прав на удаление карточки' });
+//       }
+//       Card.findByIdAndDelete(cardId)
+//         .then((cardDeleted) => {
+//           res.send({ data: cardDeleted });
+//         })
+//         .catch(err => {
+//           if (err.name === 'CastError') {
+//             res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные' });
+//           } else {
+//             res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
+//           }
+//         })
+//     })
+//     .catch((err) => {
+//       if (err.statusCode === 404) {
+//         res.status(ERR_CODE_404).send({ message: 'Карточка с указанным ID не найдена' });
+//         return;
+//       }
+//       if (err.name === 'CastError') {
+//         res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+//         return;
+//       }
+//       if (err.name === 'ValidationError') {
+//         res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+//         return;
+//       }
+//       res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
+//     })
+// };
   // Card.findByIdAndDelete(cardId)
   //   .populate(['owner', '_id'])
   //   .then((card) => {
@@ -141,7 +163,7 @@ const deleteCard = (req, res) => {
   //     res.status(500).send({ message: 'Ошибка по умолчанию' });
   //   }
   // })
-};
+// };
 // const deleteCard = (req, res) => {
 //   const { cardId } = req.params;
 //   // const owner = req.owner._id;

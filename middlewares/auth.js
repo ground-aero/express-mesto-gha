@@ -11,7 +11,8 @@ const auth = (req, res, next) => {
   // 1.достать 'Bearer' из хедера авторизации, проверять authorization
   const { authorization } = req.headers;
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    throw new AuthoErr('Необходима авторизация *');
+    throw new AuthoErr('Необходима авторизация *'); // генерим ошибку,
+    // чтобы затем передать в общий обработчик ошибок
     // res.status(401).send({ message: 'Требуется авторизация' });
   }
 

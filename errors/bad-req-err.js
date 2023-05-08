@@ -1,6 +1,6 @@
 const DefaultErr = require('./default-err');
 
-class IncorrectDataErr extends DefaultErr {
+class BadRequestErr extends DefaultErr {
   constructor(message = 'Bad Request') {
     super(message);
     this.status = 400;
@@ -8,4 +8,4 @@ class IncorrectDataErr extends DefaultErr {
   }
 }
 
-module.exports = IncorrectDataErr;
+module.exports = BadRequestErr;
