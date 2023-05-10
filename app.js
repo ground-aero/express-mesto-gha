@@ -53,13 +53,23 @@ app.use(morgan('dev'));
 //   next();
 // });
 
+// обработчики POST-запросов на роуты: '/signin' и '/signup'
+app.post('/signin', login);
+app.post('/signup', createUser);
 /** 3 Routes which handling requests */
 app.use('/users', usersRouter); // запросы в корень будем матчить с путями которые прописали в руте юзеров
 app.use('/cards', cardsRouter);
 /** error handler для роута неизвестного маршрута, должен отправить только ошибку с кодом 404 */
-// обработчики POST-запросов на роуты: '/signin' и '/signup'
-app.post('/signin', login);
-app.post('/signup', createUser);
+
+// временное решение авторизации. мидлвэр
+// app.use((req, res, next) => {
+//   req.user = { // Она добавляет в каждый запрос объект user.
+//     // Берите из него идентификатор пользователя в контроллере создания карточки.
+//     _id: _id,
+//     // _id: '641759709a112c44444a1355', // вставьте _id созданного в предыдущем пункте пользователя
+//   };
+//   next();
+// });
 
 // app.all('*', (req, res) => {
 //   res.status(ERR_CODE_404).send({ message: 'Страница по указанному маршруту не найдена' });

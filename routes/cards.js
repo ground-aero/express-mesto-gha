@@ -13,7 +13,7 @@ router.post('/', auth, createCard); // В теле запроса на созд�
 // router.get('/:userId', getUser); // возвращ польз по _id. 2-й аргум -это ф-ция контроллер.
 router.delete('/:cardId', auth, deleteCard); // 9. Проконтр. права. Нельзя удал карт др польз-лей
 // PUT /cards/:cardId/likes — поставить лайк карточке
-router.put('/:cardId/likes', likeCard);
+router.put('/:cardId/likes', auth, likeCard);
 // DELETE /cards/:cardId/likes — убрать лайк с карточки
 router.delete('/:cardId/likes', dislikeCard);
 

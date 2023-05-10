@@ -23,7 +23,6 @@ const cardSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId, // массив ObjectId
       default: [], // по умолчанию — пустой массив.
-      ref: 'user',
     },
   ],
   createdAt: {

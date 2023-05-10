@@ -9,6 +9,7 @@ const {
   ERR_CODE_404,
   ERR_CODE_500,
 } = require('../errors/errors-codes');
+const BadRequestErr = require('../errors/bad-req-err');
 // 200 - success; 201 - success, resource created; 400 - not valid data; 401 - not authorised
 // 403 - authorised, no access; 404 - resource not found; 422 - unprocessable entity
 
@@ -16,9 +17,9 @@ const {
  * Добавление пользователя без обяз поля avatar - body: { name, about, avatar }
  * @return {Promise}
  * */
-// POST /auth/local/register
-// POST /signup
-const createUser = (req, res) => {
+// front: POST /auth/local/register
+// back: POST /signup
+const createUser = (req, res, next) => {
   const {
     name,
     about,
@@ -39,6 +40,13 @@ const createUser = (req, res) => {
     .then((user) => res.status(201).send({ data: user })) // В теле запроса на созд польз
     // передайте JSON-объект с
     // данные не записались, вернём ошибку
+    // .catch((err) => {
+    //   if (err.name === 'ValidationError') { // здесь написан верно!
+    //     next(new BadRequestErr('Переданы некорректные данные при создании пользователя'));
+    //   } else {
+    //     next(err);
+    //   }
+    // });
     .catch((err) => {
       if (err.name === 'ValidationError') { // здесь написан верно!
         res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при создании пользователя' });

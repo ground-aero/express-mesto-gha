@@ -18,24 +18,30 @@ const createCard = (req, res) => {
   // console.log(req.user._id); // _id станет доступен. Мы захардкодили идентификатор пользователя,
   // кто бы ни создал карточку, в базе у неё будет один и тот же автор
   const { name, link } = req.body;
-  const owner = req.user._id;
+  // const owner = req.user._id;
   // const { _id } = req.user._id;
   // console.log(_id);
   // const { user } = req.body;
 
-  return Card.create({ name, link, owner }) // этот идентификатор записыв в поле owner
-    // при создании новой карточки
-    // Вернём записаные в базу данные
-    .then((card) => res.status(201).send({ data: card })) // В теле запроса на созд карточки
-    // передайте JSON-объект с
-    // данные не записались, вернём ошибку
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при создании карточки' });
-      } else {
-        res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
-      }
-    });
+  return (
+    Card.create({ name, link, owner: req.user._id }) // этот идентификатор записыв в поле owner
+      // при создании новой карточки
+      // Вернём записаные в базу данные
+      .then((card) => res.status(201).send({ data: card })) // В теле запроса на созд карточки
+      // передайте JSON-объект с
+      // данные не записались, вернём ошибку
+      .catch((err) => {
+        if (err.name === "ValidationError") {
+          res
+            .status(ERR_CODE_400)
+            .send({
+              message: "Переданы некорректные данные при создании карточки",
+            });
+        } else {
+          res.status(ERR_CODE_500).send({ message: "Ошибка по умолчанию" });
+        }
+      })
+  );
 };
 // const createCard = (req, res) => {
 //   // console.log(req.user._id); // _id станет доступен.
@@ -127,13 +133,24 @@ const deleteCard = (req, res, next) => {
  * url: "http://localhost:3000/cards/63f61dfbc7eee15ca4adc16e/likes"
  * @param res
  */
+// const likeCard = (req, res, next) => {
+//   Card.findByIdAndUpdate(req.params.cardId,
+//     { $addToSet: { likes: req.user._id } },
+//     { new: true })
+//     .orFail()
+//     .catch(() => {
+//       throw new BadRequestErr({ message: 'Нет карточки с таким id' });
+//     })
+//     .then((likes) => res.send({ data: likes }))
+//     .catch(next);
+// };
 const likeCard = (req, res, next) => {
-  const { cardId } = req.params;
-  const ownerId = req.user._id;
+  // const { cardId } = req.params;
+  // const ownerId = req.user._id;
   // const { _id } = req.user;
   // добавить _id польз-ля в массив лайков, если его в нем нет
-  Card.findByIdAndUpdate(cardId, { $addToSet: { likes: ownerId } }, { new: true })
-    .orFail(new Error('idNotFoundError'))
+  Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
+    .orFail(() => new Error('idNotFoundError'))
     // .orFail(() => new NotFoundErr('такой карточки (ID) не существует'))
     .then((card) => res.send({ data: card }))
     .catch((err) => {
@@ -156,6 +173,7 @@ const likeCard = (req, res, next) => {
 //   }
 // });
 };
+
 // const likeCard = (req, res) => {
 //   const { cardId } = req.params;
 //   // const ownerId = req.user._id;
