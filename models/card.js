@@ -7,6 +7,7 @@ const cardSchema = new mongoose.Schema({
     type: String,
     minlength: [2, 'minimal length is 2 symbols...'],
     maxlength: [30, 'maximum length is 30 symbols...'],
+    trim: true,
     required: true,
   },
   link: {

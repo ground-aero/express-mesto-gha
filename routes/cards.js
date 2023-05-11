@@ -15,7 +15,7 @@ router.delete('/:cardId', auth, deleteCard); // 9. Проконтр. права.
 // PUT /cards/:cardId/likes — поставить лайк карточке
 router.put('/:cardId/likes', auth, likeCard);
 // DELETE /cards/:cardId/likes — убрать лайк с карточки
-router.delete('/:cardId/likes', dislikeCard);
+router.delete('/:cardId/likes', auth, dislikeCard);
 
 /** экспортируем сущность которая внутри данного файла. Он отвечает только за юзера (!) */
 module.exports = router;

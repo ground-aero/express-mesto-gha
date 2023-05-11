@@ -25,6 +25,8 @@ const errorsHandler = require('./middlewares/errors-handler');
 /** подключаемся к серверу mongo */
 mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {
   useNewUrlParser: true,
+  // useUnifiedTopology: true,
+  // uerCreateIndex: true, // настройки Mongoose
 });
 
 /** 2 */

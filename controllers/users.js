@@ -10,6 +10,7 @@ const {
   ERR_CODE_500,
 } = require('../errors/errors-codes');
 const BadRequestErr = require('../errors/bad-req-err');
+const ConflictErr = require('../errors/conflict-err');
 // 200 - success; 201 - success, resource created; 400 - not valid data; 401 - not authorised
 // 403 - authorised, no access; 404 - resource not found; 422 - unprocessable entity
 
@@ -49,14 +50,17 @@ const createUser = (req, res, next) => {
     // });
     .catch((err) => {
       if (err.name === 'ValidationError') { // здесь написан верно!
-        res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при создании пользователя' });
+        return next(new BadRequestErr('Переданы некорректные данные при создании пользователя'));
+        // res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные при создании пользователя' });
+      }
+      if (err.code === 11000) {
+        return next(new ConflictErr('Такой логин-емейл уже существует! (409)'));
       } else {
-        res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
+        next(err);
       }
     });
 };
 
-// #PW-14
 // POST /auth/local
 // POST /signin
 /** контроллер login, получает из запроса почту и пароль и проверяет их */
