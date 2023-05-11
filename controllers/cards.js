@@ -1,10 +1,10 @@
 /** Контроллер создания карточки */
 const Card = require('../models/card');
-const {
-  ERR_CODE_400,
-  ERR_CODE_404,
-  ERR_CODE_500,
-} = require('../errors/errors-codes');
+// const {
+//   ERR_CODE_400,
+//   ERR_CODE_404,
+//   ERR_CODE_500,
+// } = require('../errors/errors-codes');
 const NotFoundErr = require('../errors/not-found-err');
 const ForbiddenErr = require('../errors/forbidden-err');
 const BadRequestErr = require('../errors/bad-req-err');
@@ -14,12 +14,11 @@ const BadRequestErr = require('../errors/bad-req-err');
  * user._id - ID польз.
  * @return {Promise}
  */
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   // console.log(req.user._id); // _id станет доступен. Мы захардкодили идентификатор пользователя,
   // кто бы ни создал карточку, в базе у неё будет один и тот же автор
   const { name, link } = req.body;
   // const { _id } = req.user._id;
-
   return (
     Card.create({ name, link, owner: req.user._id }) // этот идентификатор записыв в поле owner
       // при создании новой карточки
@@ -28,14 +27,10 @@ const createCard = (req, res) => {
       // передайте JSON-объект с
       // данные не записались, вернём ошибку
       .catch((err) => {
-        if (err.name === "ValidationError") {
-          res
-            .status(ERR_CODE_400)
-            .send({
-              message: "Переданы некорректные данные при создании карточки",
-            });
+        if (err.name === 'ValidationError') {
+          return next(new BadRequestErr('Переданы некорректные данные при создании карточки'));
         } else {
-          res.status(ERR_CODE_500).send({ message: "Ошибка по умолчанию" });
+          next(err);
         }
       })
   );

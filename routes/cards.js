@@ -9,13 +9,14 @@ const auth = require('../middlewares/auth');
 /** Handle incoming @requests to /users */
 router.get('/', getCards); // возвр. все карточки, 'cards' можем удалять. 2-й аргумент это ф-ция контроллер.
 // создаёт карточку
-router.post('/', auth, createCard); // В теле запроса на создание карточки перед JSON-объект с полями: name, link
+router.use(auth); /** 7. Защита авторизацией всех остальных роутов */
+router.post('/', createCard); // В теле запроса на создание карточки перед JSON-объект с полями: name, link
 // router.get('/:userId', getUser); // возвращ польз по _id. 2-й аргум -это ф-ция контроллер.
-router.delete('/:cardId', auth, deleteCard); // 9. Проконтр. права. Нельзя удал карт др польз-лей
+router.delete('/:cardId', deleteCard); // 9. Проконтр. права. Нельзя удал карт др польз-лей
 // PUT /cards/:cardId/likes — поставить лайк карточке
-router.put('/:cardId/likes', auth, likeCard);
+router.put('/:cardId/likes', likeCard);
 // DELETE /cards/:cardId/likes — убрать лайк с карточки
-router.delete('/:cardId/likes', auth, dislikeCard);
+router.delete('/:cardId/likes', dislikeCard);
 
 /** экспортируем сущность которая внутри данного файла. Он отвечает только за юзера (!) */
 module.exports = router;
