@@ -29,10 +29,16 @@ const createCard = (req, res, next) => {
       .catch((err) => {
         if (err.name === 'ValidationError') {
           return next(new BadRequestErr('Переданы некорректные данные при создании карточки'));
-        } else {
-          next(err);
         }
+        return next(err);
       })
+      // .catch((err) => {
+      //   if (err.name === 'ValidationError') {
+      //     return next(new BadRequestErr('Переданы некорректные данные при создании карточки'));
+      //   } else {
+      //     next(err);
+      //   }
+      // })
   );
 };
 // const createCard = (req, res) => {
@@ -84,10 +90,9 @@ const deleteCard = (req, res, next) => {
     .then((card) => {
       if (card.owner.toString() !== req.user._id) { // req.user._id - это
         return next(new ForbiddenErr('Нельзя удалить чужую карточку!'));
-      } else {
-        return card.deleteOne()
-          .then(() => res.send({ data: card }));
       }
+      return card.deleteOne()
+        .then(() => res.send({ data: card }));
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
@@ -185,18 +190,19 @@ const dislikeCard = (req, res, next) => {
     })
     .catch(next);
   // .orFail(new Error('idNotFoundError'))
-    // .then((card) => res.send({ data: card })) // res.status(200) по дефолту
-    // .catch((err) => {
-    //   if (err.message === 'idNotFoundError') {
-    //     res.status(ERR_CODE_404).send({ message: 'Передан несуществующий _id карточки' });
-    //     return;
-    //   }
-    //   if (err.name === 'CastError') {
-    //     res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные для снятии лайка' });
-    //   } else {
-    //     res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
-    //   }
-    // });
+  // .then((card) => res.send({ data: card })) // res.status(200) по дефолту
+  // .catch((err) => {
+  //   if (err.message === 'idNotFoundError') {
+  //     res.status(ERR_CODE_404).send({ message: 'Передан несуществующий _id карточки' });
+  //     return;
+  //   }
+  //   if (err.name === 'CastError') {
+  //     res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные
+  //     для снятии лайка' });
+  //   } else {
+  //     res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
+  //   }
+  // });
 };
 
 module.exports = {
