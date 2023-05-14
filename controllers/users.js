@@ -11,7 +11,7 @@ const User = require('../models/user');
 // } = require('../errors/errors-codes');
 const BadRequestErr = require('../errors/bad-req-err');
 const ConflictErr = require('../errors/conflict-err');
-const NotFoundErr = require("../errors/not-found-err");
+const NotFoundErr = require('../errors/not-found-err');
 // 200 - success; 201 - success, resource created; 400 - not valid data; 401 - not authorised
 // 403 - authorised, no access; 404 - resource not found; 422 - unprocessable entity
 
@@ -68,23 +68,37 @@ const createUser = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
   // ToDo: 1)find user, 2)check pass.., 3)return jwt & user
-  User
-    .findOne({ email }).select('+password')// => тогда далее в объекте user будет хеш пароля
-    .orFail(() => new NotFoundErr('Такой пользователь или пароль не найден'))
-    // .orFail(() => res.status(404).send({ message: 'Пользователь или пароль не найден *' }))
-    // вызвали у библиоткеи compare - асинхронная. сравнили 2 пароля
-    .then((user) => bcrypt.compare(password, user.password).then((matched) => {
-      if (matched) {
-        return user;
-      }
-      return res.status(404).send({ message: 'Пользователь или пароль не найден *' });
-    }))
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       // юзаем библиотеку jsonwebtoken, методом sign создали JWT (внутрь котор записали _id)
-      const jwt = jsonwebtoken.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res.send({ user, jwt });
+      const jwt = jsonwebtoken.sign({ _id: user._id}, 'some-secret-key', { expiresIn: '7d' });
+      res.cookie('jsonwebtoken', jwt, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+        sameSite: true
+      })
+      res.send({ user, jwt })
     })
     .catch(next);
+
+  // User
+  //   .findOne({ email }).select('+password')// => тогда далее в объекте user будет хеш пароля
+  //   .orFail(() => new NotFoundErr('Такой пользователь или пароль не найден'))
+  //   // .orFail(() => res.status(404).send({ message: 'Пользователь или пароль не найден *' }))
+  //   // вызвали у библиоткеи compare - асинхронная. сравнили 2 пароля
+  //   .then((user) => bcrypt.compare(password, user.password)
+  //     .then((matched) => {
+  //       if (matched) {
+  //         return user;
+  //       }
+  //       return res.status(404).send({message: 'Пользователь или пароль не найден *'});
+  //     }))
+  //   .then((user) => {
+  //     // юзаем библиотеку jsonwebtoken, методом sign создали JWT (внутрь котор записали _id)
+  //     const jwt = jsonwebtoken.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+  //     res.send({ user, jwt });
+  //   })
+  //   .catch(next);
   // сгенерить jwt токен и вепрнуть его
 };
 
