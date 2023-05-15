@@ -78,26 +78,6 @@ const login = (req, res, next) => {
       res.send({ user, jwt });
     })
     .catch(next);
-
-  // User
-  //   .findOne({ email }).select('+password')// => тогда далее в объекте user будет хеш пароля
-  //   .orFail(() => new NotFoundErr('Такой пользователь или пароль не найден'))
-  //   // .orFail(() => res.status(404).send({ message: 'Пользователь или пароль не найден *' }))
-  //   // вызвали у библиоткеи compare - асинхронная. сравнили 2 пароля
-  //   .then((user) => bcrypt.compare(password, user.password)
-  //     .then((matched) => {
-  //       if (matched) {
-  //         return user;
-  //       }
-  //       return res.status(404).send({message: 'Пользователь или пароль не найден *'});
-  //     }))
-  //   .then((user) => {
-  //     // юзаем библиотеку jsonwebtoken, методом sign создали JWT (внутрь котор записали _id)
-  //     const jwt = jsonwebtoken.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-  //     res.send({ user, jwt });
-  //   })
-  //   .catch(next);
-  // сгенерить jwt токен и вепрнуть его
 };
 
 // #PW-14

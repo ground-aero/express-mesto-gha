@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const morgan = require('morgan');
+const { errors } = require('celebrate');
 const {
   ERR_CODE_404,
 } = require('./errors/errors-codes');
@@ -21,6 +22,7 @@ const {
   createUser,
 } = require('./controllers/users');
 const errorsHandler = require('./middlewares/errors-handler');
+const { loginValidator, createUserValidator } = require('./middlewares/validator');
 
 /** подключаемся к серверу mongo */
 mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {
@@ -46,33 +48,13 @@ const limiter = rateLimit({
 app.use(limiter);
 app.use(morgan('dev'));
 
-// временное решение авторизации. мидлвэр
-// app.use((req, res, next) => {
-//   req.user = { // Она добавляет в каждый запрос объект user.
-//     // Берите из него идентификатор пользователя в контроллере создания карточки.
-//     _id: '641759709a112c44444a1355', // вставьте _id созданного в предыдущем пункте пользователя
-//   };
-//   next();
-// });
-
 // обработчики POST-запросов на роуты: '/signin' и '/signup'
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', loginValidator, login);
+app.post('/signup', createUserValidator, createUser);
 /** 3 Routes which handling requests */
 app.use('/users', usersRouter); // запросы в корень будем матчить с путями которые прописали в руте юзеров
 app.use('/cards', cardsRouter);
 /** error handler для роута неизвестного маршрута, должен отправить только ошибку с кодом 404 */
-
-// временное решение авторизации. мидлвэр
-// app.use((req, res, next) => {
-//   req.user = { // Она добавляет в каждый запрос объект user.
-//     // Берите из него идентификатор пользователя в контроллере создания карточки.
-//     _id: _id,
-//     // _id: '641759709a112c44444a1355', // вставьте _id созданного
-//     в предыдущем пункте пользователя
-//   };
-//   next();
-// });
 
 // app.all('*', (req, res) => {
 //   res.status(ERR_CODE_404).send({ message: 'Страница по указанному маршруту не найдена' });
@@ -81,6 +63,7 @@ app.use('/cards', cardsRouter);
 app.use((req, res, next) => {
   next(new NotFoundErr(ERR_CODE_404));
 });
+app.use(errors()); // обработчик ошибок celebrate
 app.use((error, req, res, next) => {
   res.status(error.status || 500);
   res.json({
