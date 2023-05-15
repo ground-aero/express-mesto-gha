@@ -21,7 +21,29 @@ const createUserValidator = celebrate({
   }).unknown(true),
 });
 
+const userIdValidator = celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().alphanum().length(24).hex(),
+  }),
+});
+
+const updateProfileValidator = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+  }),
+});
+
+const updateAvatarValidator = celebrate({
+  body: Joi.object().keys({
+    avatar: Joi.string().required(),
+  }),
+});
+
 module.exports = {
   loginValidator,
   createUserValidator,
+  userIdValidator,
+  updateProfileValidator,
+  updateAvatarValidator,
 };

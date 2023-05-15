@@ -60,6 +60,16 @@ const createUser = (req, res, next) => {
     });
 };
 
+/** @param req, GET /users
+ * Получить всех пользователей
+ * @param res
+ */
+const getUsers = (req, res, next) => {
+  User.find({})
+    .then((users) => res.send({ data: users })) // res.status(200) добавл по дефолту
+    .catch(next);
+};
+
 // POST /auth/local
 // POST /signin
 /** контроллер login, получает из запроса почту и пароль и проверяет их */
@@ -82,39 +92,6 @@ const login = (req, res, next) => {
 
 // #PW-14
 // POST /auth/local/register
-// const register = (req, res, next) => {
-//   res.status(200).send({ message: "register Ok" })
-// };
-/** @param req, PATCH /users/me
- * Обновить инфо о пользователе - body: { name, about }
- * user._id - user's ID
- * */
-const updateProfileInfo = (req, res, next) => {
-  const { _id } = req.user;
-  const { name, about } = req.body;
-
-  return User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
-    // .orFail(() => new NotFoundErr('Такой пользователь не найден'))
-    .then((user) => {
-      res.send({ data: user }); // res.status(200) добавл по дефолту
-    })
-    .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
-        return next(new BadRequestErr(err.message));
-      }
-      return next(err);
-    });
-};
-
-/** @param req, GET /users
- * Получить всех пользователей
- * @param res
- */
-const getUsers = (req, res, next) => {
-  User.find({})
-    .then((users) => res.send({ data: users })) // res.status(200) добавл по дефолту
-    .catch(next);
-};
 
 /** @param req - GET /users/:userId,
  * Получить пользователя по ID (params.userId - ID пользователя)
@@ -169,6 +146,27 @@ const getCurrentUser = (req, res, next) => {
   // res.status(200).send({ message: 'getCurrentUser Ok' });
 };
 
+/** @param req, PATCH /users/me
+ * Обновить инфо о пользователе - body: { name, about }
+ * user._id - user's ID
+ * */
+const updateProfileInfo = (req, res, next) => {
+  const { _id } = req.user;
+  const { name, about } = req.body;
+
+  return User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
+    // .orFail(() => new NotFoundErr('Такой пользователь не найден'))
+    .then((user) => {
+      res.send({ data: user }); // res.status(200) добавл по дефолту
+    })
+    .catch((err) => {
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
+        return next(new BadRequestErr(err.message));
+      }
+      return next(err);
+    });
+};
+
 /** @param req, PATCH /users/me/avatar  - Обновить аватар
  * user._id - user's ID
  * body: {avatar} - link
@@ -195,10 +193,10 @@ const updateAvatar = (req, res, next) => {
 
 module.exports = {
   createUser,
-  login,
-  updateProfileInfo,
   getUsers,
+  login,
   getUserById,
   getCurrentUser,
+  updateProfileInfo,
   updateAvatar,
 };
