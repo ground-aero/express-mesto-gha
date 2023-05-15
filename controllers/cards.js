@@ -32,13 +32,6 @@ const createCard = (req, res, next) => {
         }
         return next(err);
       })
-      // .catch((err) => {
-      //   if (err.name === 'ValidationError') {
-      //     return next(new BadRequestErr('Переданы некорректные данные при создании карточки'));
-      //   } else {
-      //     next(err);
-      //   }
-      // })
   );
 };
 // const createCard = (req, res) => {
@@ -138,7 +131,6 @@ const likeCard = (req, res, next) => {
   // const { params: { cardId } } = req;
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .orFail()
-    // .orFail(() => new Error('Нет карточки по данному ID'))
     // .orFail(() => new NotFoundErr('такой карточки (ID) не существует'))
     .then((card) => res.send({ data: card }))
     .catch(() => {
@@ -152,18 +144,6 @@ const likeCard = (req, res, next) => {
       // }
     })
     .catch(next);
-// .catch((err) => {
-//   if (err.message === 'idNotFoundError') {
-//     res.status(ERR_CODE_404).send({ message: 'Передан несуществующий _id карточки' });
-//     return;
-//   }
-//   if (err.name === 'CastError') {
-//     res.status(ERR_CODE_400).send({ message: 'Переданы некорректные данные
-//     для постановки лайка' });
-//   } else {
-//     res.status(ERR_CODE_500).send({ message: 'Ошибка по умолчанию' });
-//   }
-// });
 };
 
 /** убрать лайк с карточки
@@ -173,7 +153,6 @@ const likeCard = (req, res, next) => {
 const dislikeCard = (req, res, next) => {
   const { cardId } = req.params;
   // const { _id } = req.user;
-
   Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
     // убрать _id из массива польз-ля
     .orFail()
