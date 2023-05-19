@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 const AuthoErr = require('../errors/autho-err');
+const {
+  isURL,
+} = require('../utils/utils');
 
 const userSchema = new mongoose.Schema({ // определить поля для пользователя:
   // _id: mongoose.Schema.Types.ObjectId,
@@ -23,9 +26,7 @@ const userSchema = new mongoose.Schema({ // определить поля для
   avatar: {
     type: String,
     validate: {
-      validator: function (link) {
-        return /^https*:\/\/[w\.]*[a-z0-9\.\_\-\~\:\/?#\[\]@!\$&'\(\)\*\+,;=]*[$#]*/.test(link); // join('')
-      },
+      validator: (link) => isURL(link), // join('')
       message: 'не является валидной URL ссылкой!',
     },
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',

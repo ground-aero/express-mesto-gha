@@ -175,6 +175,7 @@ const updateAvatar = (req, res, next) => {
   const { _id } = req.user;
   const { avatar } = req.body;
 
+  // return User.findByIdAndUpdate(_id, { avatar }, { new: true, runValidators: true })
   return User.findByIdAndUpdate(_id, { avatar }, { new: true, runValidators: true })
     // .orFail()
     .then((user) => {
