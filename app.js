@@ -48,14 +48,14 @@ const limiter = rateLimit({
 app.use(limiter);
 app.use(morgan('dev'));
 
-// обработчики POST-запросов на роуты: '/signin' и '/signup'
-app.post('/signin', loginValidator, login);
-app.post('/signup', createUserValidator, createUser);
 /** 3 Routes which handling requests */
 app.use('/users', usersRouter); // запросы в корень будем матчить с путями которые прописали в руте юзеров
 app.use('/cards', cardsRouter);
 /** error handler для роута неизвестного маршрута, должен отправить только ошибку с кодом 404 */
 
+// обработчики POST-запросов на роуты: '/signin' и '/signup'
+app.post('/signin', loginValidator, login);
+app.post('/signup', createUserValidator, createUser);
 // app.all('*', (req, res) => {
 //   res.status(ERR_CODE_404).send({ message: 'Страница по указанному маршруту не найдена' });
 // });

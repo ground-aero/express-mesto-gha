@@ -49,15 +49,16 @@ const createUser = (req, res, next) => {
     //     next(err);
     //   }
     // });
-    .catch((err) => {
-      if (err.name === 'ValidationError') { // здесь написан верно!
-        return next(new BadRequestErr('Переданы некорректные данные при создании пользователя'));
-      }
-      if (err.code === 11000) {
-        return next(new ConflictErr('Такой логин-емейл уже существует! (409)'));
-      }
-      return next(err);
-    });
+    // .catch((err) => {
+    //   if (err.name === 'ValidationError') { // здесь написан верно!
+    //     return next(new BadRequestErr('Переданы некорректные данные при создании пользователя'));
+    //   }
+    //   if (err.code === 11000) {
+    //     return next(new ConflictErr('Такой логин-емейл уже существует! (409)'));
+    //   }
+    //   return next(err);
+    // });
+    .catch(next);
 };
 
 /** @param req, GET /users
