@@ -29,16 +29,16 @@ const userSchema = new mongoose.Schema({ // определить поля для
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     // match: [isURL, 'Невалидный емейл'],
     // validate: [validator.isURL, 'Введите ссылку для изображения'],
-    validate: {
-      validator(link) {
-        return validator.isURL(link)
-      },
-      message: 'не является валидной URL ссылкой!',
-    },
     // validate: {
-    //   validator: (link) => isURL(link), // join('')
+    //   validator(link) {
+    //     return validator.isURL(link);
+    //   },
     //   message: 'не является валидной URL ссылкой!',
     // },
+    validate: {
+      validator: (link) => isURL(link), // join('')
+      message: 'не является валидной URL ссылкой!',
+    },
   },
   email: {
     type: String,
