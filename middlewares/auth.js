@@ -16,7 +16,7 @@ const auth = (req, res, next) => {
 
   try {
     if (!authorization || !authorization.startsWith('Bearer ')) {
-      throw new AuthoErr('Необходима авторизация *'); // генерим ошибку в синхронном коде,
+      throw new AuthoErr({ message: 'Необходима авторизация *' }); // генерим ошибку в синхронном коде,
       // так допустимо.
       // Либо через next(new Err..()...) чтобы затем передать в общий обработчик ошибок
       // res.status(401).send({ message: 'Требуется авторизация' });
