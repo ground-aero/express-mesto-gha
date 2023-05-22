@@ -10,27 +10,47 @@ const auth = (req, res, next) => {
 // ToDo: check token valid, and go next. If (valid) {go next}, else error
   // 1.достать 'Bearer' из хедера авторизации, проверять authorization
   const { authorization } = req.headers;
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    throw new AuthoErr('Необходима авторизация *'); // генерим ошибку в синхронном коде,
-    // так допустимо.
-    // Либо через next(new Err..()...) чтобы затем передать в общий обработчик ошибок
-    // res.status(401).send({ message: 'Требуется авторизация' });
-  }
-
   // 2.брать authorization, достать jwt из authorization хедера,
   // проверить jwt валидный с помощью библиотеки jsonwebtoken что
   let payload;
-  const jwt = authorization.replace('Bearer ', '');
+
   try {
+    if (!authorization || !authorization.startsWith('Bearer ')) {
+      throw new AuthoErr('Необходима авторизация *'); // генерим ошибку в синхронном коде,
+      // так допустимо.
+      // Либо через next(new Err..()...) чтобы затем передать в общий обработчик ошибок
+      // res.status(401).send({ message: 'Требуется авторизация' });
+    }
+
+    const jwt = authorization.replace('Bearer ', '');
     payload = jsonwebtoken.verify(jwt, 'some-secret-key');
   } catch (err) {
-    next(new AuthoErr('Необходима авторизация-'));
-    // return next(new AuthoErr('Необходима авторизация-'));
+    next(err);
     // res.status(401).send({ message: 'Необходима авторизация' });
   }
+
+  // const { authorization } = req.headers;
+  // if (!authorization || !authorization.startsWith('Bearer ')) {
+  //   throw new AuthoErr('Необходима авторизация *'); // генерим ошибку в синхронном коде,
+  //   // так допустимо.
+  //   // Либо через next(new Err..()...) чтобы затем передать в общий обработчик ошибок
+  //   // res.status(401).send({ message: 'Требуется авторизация' });
+  // }
+  //
+  // // 2.брать authorization, достать jwt из authorization хедера,
+  // // проверить jwt валидный с помощью библиотеки jsonwebtoken что
+  // let payload;
+  // const jwt = authorization.replace('Bearer ', '');
+  // try {
+  //   payload = jsonwebtoken.verify(jwt, 'some-secret-key');
+  // } catch (err) {
+  //   return next(new AuthoErr('Необходима авторизация-'));
+  //   // res.status(401).send({ message: 'Необходима авторизация' });
+  // }
+
   // добавить пейлоуд токена в объект запроса юзера !!!!!!!!!!!!
   req.user = payload; // 3.если все хорошо -> иди дальше 'go next' (пропустить запрос)
-  return next();
+  next();
 };
 // const auth = (req, res, next) => {
 // // ToDo: check token valid, and go next. If (valid) {go next}, else error
