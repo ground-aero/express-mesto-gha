@@ -10,7 +10,6 @@ const auth = (req, res, next) => {
 // ToDo: check token valid, and go next. If (valid) {go next}, else error
   // 1.достать 'Bearer' из хедера авторизации, проверять authorization
   const { authorization } = req.headers;
-  
   if (!authorization || !authorization.startsWith('Bearer ')) {
     throw new AuthoErr('Необходима авторизация *'); // генерим ошибку в синхронном коде,
     // так допустимо.
@@ -25,12 +24,12 @@ const auth = (req, res, next) => {
   try {
     payload = jsonwebtoken.verify(jwt, 'some-secret-key');
   } catch (err) {
-    return next(new AuthoErr('Необходима авторизация'));
+    next(new AuthoErr('Необходима авторизация-'));
+    // return next(new AuthoErr('Необходима авторизация-'));
     // res.status(401).send({ message: 'Необходима авторизация' });
   }
   // добавить пейлоуд токена в объект запроса юзера !!!!!!!!!!!!
-  req.user = payload;
-  // 3.если все хорошо -> иди дальше 'go next' (пропустить запрос)
+  req.user = payload; // 3.если все хорошо -> иди дальше 'go next' (пропустить запрос)
   return next();
 };
 // const auth = (req, res, next) => {
