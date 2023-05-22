@@ -1,7 +1,7 @@
 class AuthoErr extends Error {
-  constructor(message, ...rest) {
-    super(...rest);
-    this.status = 401;
+  constructor(message) {
+    super(message);
+    this.statusCode = 401;
     this.message = message;
   }
 }
