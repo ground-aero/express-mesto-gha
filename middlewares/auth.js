@@ -16,7 +16,7 @@ const auth = (req, res, next) => {
 
   try {
     if (!authorization || !authorization.startsWith('Bearer ')) {
-      throw new AuthoErr({ message: 'Необходима авторизация *' }); // генерим ошибку в синхронном коде,
+      throw new AuthoErr('Необходима авторизация *'); // генерим ошибку в синхронном коде,
       // так допустимо.
       // Либо через next(new Err..()...) чтобы затем передать в общий обработчик ошибок
       // res.status(401).send({ message: 'Требуется авторизация' });
@@ -50,7 +50,7 @@ const auth = (req, res, next) => {
 
   // добавить пейлоуд токена в объект запроса юзера !!!!!!!!!!!!
   req.user = payload; // 3.если все хорошо -> иди дальше 'go next' (пропустить запрос)
-  next();
+  return next();
 };
 // const auth = (req, res, next) => {
 // // ToDo: check token valid, and go next. If (valid) {go next}, else error

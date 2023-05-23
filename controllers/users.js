@@ -67,7 +67,7 @@ const createUser = (req, res, next) => {
  */
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send({ data: users })) // res.status(200) добавл по дефолту
+    .then((users) => res.send([{ data: users }, { message: 'авторизация успешна!' }])) // res.status(200) добавл по дефолту
     .catch(next);
 };
 
