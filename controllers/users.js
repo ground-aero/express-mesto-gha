@@ -39,16 +39,15 @@ const createUser = (req, res, next) => {
     ))
     // и вернем/созд док на осн приш. данных.
     // Вернём записаные в базу данные
-    .then((user) => res.status(201).send({ data: user })) // В теле запроса на созд польз
-    // передайте JSON-объект с
-    // данные не записались, вернём ошибку
-    // .catch((err) => {
-    //   if (err.name === 'ValidationError') { // здесь написан верно!
-    //     next(new BadRequestErr('Переданы некорректные данные при создании пользователя'));
-    //   } else {
-    //     next(err);
-    //   }
-    // });
+    .then((user) => res.status(201).send({
+      data: {
+        _id: user._id,
+        name,
+        about,
+        avatar,
+        email,
+      },
+    })) // В теле запроса на созд польз
     .catch((err) => {
       if (err.name === 'ValidationError') { // здесь написан верно!
         return next(new BadRequestErr('Переданы некорректные данные при создании пользователя'));
