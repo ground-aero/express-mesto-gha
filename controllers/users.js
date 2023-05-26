@@ -40,20 +40,24 @@ const createUser = (req, res, next) => {
     // и вернем/созд док на осн приш. данных.
     // Вернём записаные в базу данные
     .then((user) => res.status(201).send({
+      data: {
         _id: user._id,
         name,
         about,
         avatar,
         email,
+      },
     })) // В теле запроса на созд польз
     .catch((err) => {
-      if (err.name === 'ValidationError') { // здесь написан верно!
-        return next(new BadRequestErr('Переданы некорректные данные при создании пользователя'));
-      }
       if (err.code === 11000) {
-        return next(new ConflictErr('Такой логин-емейл уже существует! (409)'));
+        next(new ConflictErr('Такой логин-емейл уже существует! (409)'));
+      } else {
+        next(err);
       }
-      return next(err);
+      // if (err.name === 'ValidationError') { // здесь написан верно!
+      //   return next(new BadRequestErr('Переданы некорректные данные при создании пользователя'));
+      // }
+      // return next(err);
     });
   // .catch(next);
 };
