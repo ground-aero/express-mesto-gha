@@ -22,6 +22,7 @@ const {
   createUser,
 } = require('./controllers/users');
 const errorsHandler = require('./middlewares/errors-handler');
+const auth = require('./middlewares/auth');
 const { loginValidator, createUserValidator } = require('./middlewares/validator');
 
 /** подключаемся к серверу mongo */
@@ -49,8 +50,8 @@ app.use(limiter);
 app.use(morgan('dev'));
 
 /** 3 Routes which handling requests */
-app.use('/users', usersRouter); // запросы в корень будем матчить с путями которые прописали в руте юзеров
-app.use('/cards', cardsRouter);
+app.use('/users', auth, usersRouter); // запросы в корень будем матчить с путями которые прописали в руте юзеров
+app.use('/cards', auth, cardsRouter);
 /** error handler для роута неизвестного маршрута, должен отправить только ошибку с кодом 404 */
 
 // обработчики POST-запросов на роуты: '/signin' и '/signup'
