@@ -50,14 +50,12 @@ const createUser = (req, res, next) => {
     })) // В теле запроса на созд польз
     .catch((err) => {
       if (err.code === 11000) {
-        next(new ConflictErr('Такой логин-емейл уже существует! (409)'));
-      } else {
-        next(err);
+        return next(new ConflictErr('Такой логин-емейл уже существует! (409)'));
       }
-      // if (err.name === 'ValidationError') { // здесь написан верно!
-      //   return next(new BadRequestErr('Переданы некорректные данные при создании пользователя'));
-      // }
-      // return next(err);
+      if (err.name === 'ValidationError') { // здесь написан верно!
+        return next(new BadRequestErr('Переданы некорректные данные при создании пользователя'));
+      }
+      return next(err);
     });
   // .catch(next);
 };
