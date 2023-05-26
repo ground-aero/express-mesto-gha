@@ -66,7 +66,7 @@ const createUser = (req, res, next) => {
  */
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send({ data: users })) // res.status(200) добавл по дефолту
+    .then((users) => res.status(200).send({ data: users })) // res.status(200) добавл по дефолту
     .catch(next);
 };
 
@@ -141,7 +141,9 @@ const getCurrentUser = (req, res, next) => {
   User
     .findById(payload._id)
     .orFail(() => res.status(404).send({ message: 'Пользователь не найден' }))
-    .then((user) => res.send(user))
+    .then((user) => res.status(200).send({
+      data: user,
+    }))
     .catch(next);
   // res.status(200).send({ message: 'getCurrentUser Ok' });
 };

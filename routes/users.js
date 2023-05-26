@@ -20,7 +20,7 @@ router.get('/', auth, getUsers); // возвр. всех польз-лей, 'use
 router.get('/me', auth, getCurrentUser); // PW-14 - возвращает инфо о текущем пользователе.
 // в '/me' итак передается authorization header, поэтому не нужно 2-й раз его защищать
 
-// router.use(auth); /** 7. Защита авторизацией всех остальных роутов */
+router.use(auth); /** 7. Защита авторизацией всех остальных роутов */
 router.get('/:userId', userIdValidator, getUserById); // возвращает пользователя по _id. 2-й аргумент -это ф-ция контроллер.
 router.patch('/me', updateProfileValidator, updateProfileInfo); // PATCH /users/me — обновляет профиль */
 router.patch('/me/avatar', updateAvatarValidator, updateAvatar); // PATCH /users/me/avatar — обновляет аватар

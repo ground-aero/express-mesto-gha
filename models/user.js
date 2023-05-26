@@ -26,7 +26,6 @@ const userSchema = new mongoose.Schema({ // определить поля для
   avatar: {
     type: String,
     required: false,
-    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     // match: [isURL, 'Невалидный емейл'],
     // validate: [validator.isURL, 'Введите ссылку для изображения'],
     // validate: {
@@ -39,6 +38,7 @@ const userSchema = new mongoose.Schema({ // определить поля для
       validator: (link) => isURL(link), // join('')
       message: 'не является валидной URL ссылкой!',
     },
+    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
   },
   email: {
     type: String,
