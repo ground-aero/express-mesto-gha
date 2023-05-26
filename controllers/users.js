@@ -40,13 +40,11 @@ const createUser = (req, res, next) => {
     // и вернем/созд док на осн приш. данных.
     // Вернём записаные в базу данные
     .then((user) => res.status(201).send({
-      data: {
         _id: user._id,
         name,
         about,
         avatar,
         email,
-      },
     })) // В теле запроса на созд польз
     .catch((err) => {
       if (err.name === 'ValidationError') { // здесь написан верно!
