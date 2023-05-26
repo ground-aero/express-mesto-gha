@@ -11,19 +11,21 @@ const userSchema = new mongoose.Schema({ // определить поля для
   // _id: mongoose.Schema.Types.ObjectId,
   name: {
     type: String,
+    required: false,
     minlength: [2, 'Min length of "name" is - 2 symbols'],
     maxlength: 30,
     default: 'Жак-Ив Кусто',
   },
   about: {
     type: String,
+    required: false,
     minlength: [2, 'Min length of "about" is - 2 symbols'],
     maxlength: 30,
     default: 'Исследователь',
   },
   avatar: {
     type: String,
-    // required: false,
+    required: false,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     // match: [isURL, 'Невалидный емейл'],
     // validate: [validator.isURL, 'Введите ссылку для изображения'],
