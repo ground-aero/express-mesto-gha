@@ -1,8 +1,8 @@
 // когда пользователь пытается удалить карточку которая ему не принадлежит
 class ForbiddenErr extends Error {
-  constructor(message = 'Access is Forbidden') {
+  constructor(message) {
     super(message);
-    this.status = 403;
+    this.statusCode = 403;
   }
 }
 
