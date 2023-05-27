@@ -36,14 +36,14 @@ const updateProfileValidator = celebrate({
 
 const updateAvatarValidator = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().uri(),
+    avatar: Joi.string().regex(REGEX),
   }),
 });
 
 const cardValidator = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required(),
+    link: Joi.string().regex(REGEX),
   }),
 });
 
