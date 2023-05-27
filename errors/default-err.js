@@ -2,7 +2,7 @@
 class DefaultErr extends Error {
   constructor(message) {
     super(message); // вызываем конструктор
-    this.status = 500;
+    this.statusCode = 500;
   }
 }
 // class DefaultErr extends Error {

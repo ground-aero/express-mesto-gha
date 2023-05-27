@@ -23,7 +23,7 @@ const auth = (req, res, next) => {
     // проверить что jwt валидный, с помощью библ jsonwebtoken
     payload = jsonwebtoken.verify(jwt, 'some-secret-key');
   } catch (error) {
-    next(new AuthoErr('Необходима авторизация *'));
+    next(new AuthoErr('передан неверный логин или пароль -'));
   }
   // const { authorization } = req.headers;
   // if (!authorization || !authorization.startsWith('Bearer ')) {
