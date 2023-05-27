@@ -12,7 +12,7 @@ const auth = (req, res, next) => {
   const { authorization } = req.headers;
   // если загол. authorization не передан, или не начин. с Bearer
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    next(new AuthoErr('Необходима авторизация *'));
+    throw new AuthoErr('Необходима авторизация *');
   }
 
   //  достать jwt из authorization хедера, удалить Bearer из загол
@@ -23,7 +23,7 @@ const auth = (req, res, next) => {
     // проверить что jwt валидный, с помощью библ jsonwebtoken
     payload = jsonwebtoken.verify(jwt, 'some-secret-key');
   } catch (error) {
-    next(new AuthoErr('передан неверный логин или пароль -'));
+    throw new AuthoErr('передан неверный логин или пароль -');
   }
   // const { authorization } = req.headers;
   // if (!authorization || !authorization.startsWith('Bearer ')) {
@@ -46,7 +46,7 @@ const auth = (req, res, next) => {
 
   // добавить пейлоуд токена в объект запроса юзера !
   req.user = payload; // 3.если все хорошо -> иди дальше 'go next' (пропустить запрос)
-  next();
+  return next();
 };
 // const auth = (req, res, next) => {
 // // ToDo: check token valid, and go next. If (valid) {go next}, else error

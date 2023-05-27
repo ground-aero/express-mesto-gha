@@ -78,7 +78,7 @@ const getCards = (req, res, next) => Card.find({})
  */
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params; // extract ID from URL
-  Card.findById(cardId)
+  return Card.findById(cardId)
     .orFail(() => new NotFoundErr('По заданному ID карточки нет'))
     .then((card) => {
       if (card.owner.toString() !== req.user._id) { // req.user._id - это
@@ -158,7 +158,7 @@ const dislikeCard = (req, res, next) => {
     .orFail()
     .then((card) => res.send({ data: card })) // res.status(200) по дефолту
     .catch(() => {
-      throw new NotFoundErr('Нет карточки с таким ID (404)');
+      next(new NotFoundErr('Нет карточки с таким ID (404)'));
       // if (err.kind === 'ObjectId') {
       //   next(new BadRequestErr('Невалидный ID карточки'));
       // } else if (err.name === 'CastError') {
