@@ -12,7 +12,7 @@ const auth = (req, res, next) => {
   const { authorization } = req.headers;
   // если загол. authorization не передан, или не начин. с Bearer
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    throw new AuthoErr('Необходима авторизация *'); // генерим ошибку в синхронном коде
+    next(new AuthoErr('Необходима авторизация *'));
   }
 
   //  достать jwt из authorization хедера, удалить Bearer из загол
@@ -20,11 +20,10 @@ const auth = (req, res, next) => {
   let payload;
 
   try {
-    // проверить что jwt валидный, с помощью библиотеки jsonwebtoken
+    // проверить что jwt валидный, с помощью библ jsonwebtoken
     payload = jsonwebtoken.verify(jwt, 'some-secret-key');
   } catch (error) {
-    throw new AuthoErr('Необходима авторизация **');
-    // res.status(401).send({ message: 'Необходима авторизация' });
+    next(new AuthoErr('Необходима авторизация *'));
   }
   // const { authorization } = req.headers;
   // if (!authorization || !authorization.startsWith('Bearer ')) {
@@ -45,7 +44,7 @@ const auth = (req, res, next) => {
   //   // res.status(401).send({ message: 'Необходима авторизация' });
   // }
 
-  // добавить пейлоуд токена в объект запроса юзера !!!!!!!!!!!!
+  // добавить пейлоуд токена в объект запроса юзера !
   req.user = payload; // 3.если все хорошо -> иди дальше 'go next' (пропустить запрос)
   next();
 };
