@@ -12,6 +12,10 @@ const {
 } = require('./errors/errors-codes');
 const NotFoundErr = require('./errors/not-found-err');
 /** 1 */
+// берем адрес БД из process.env
+// const { PORT = 3000, DB_ADDRESS = 'mongodb://0.0.0.0:27017/mestodb' } = process.env;
+const { MONGO_URL } = require('./config');
+
 const { PORT = 3000 } = process.env;
 const app = express();
 
@@ -26,9 +30,9 @@ const auth = require('./middlewares/auth');
 const { loginValidator, createUserValidator } = require('./middlewares/validator');
 
 /** подключаемся к серверу mongo */
-mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {
+mongoose.connect(MONGO_URL, {
   useNewUrlParser: true,
-  // useUnifiedTopology: true,
+  useUnifiedTopology: true,
   // uerCreateIndex: true, // настройки Mongoose
 });
 
@@ -45,21 +49,19 @@ const limiter = rateLimit({
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
-// Apply the rate limiting middleware to all requests
-app.use(limiter);
+
+app.use(limiter); // Apply the rate limiting middleware to all requests
 app.use(morgan('dev'));
 
 /** 3 Routes which handling requests */
-app.use('/users', auth, usersRouter); // запросы в корень будем матчить с путями которые прописали в руте юзеров
-app.use('/cards', auth, cardsRouter);
-/** error handler для роута неизвестного маршрута, должен отправить только ошибку с кодом 404 */
-
 // обработчики POST-запросов на роуты: '/signin' и '/signup'
 app.post('/signin', loginValidator, login);
 app.post('/signup', createUserValidator, createUser);
-// app.all('*', (req, res) => {
-//   res.status(ERR_CODE_404).send({ message: 'Страница по указанному маршруту не найдена' });
-// });
+
+/** все роуты, кроме /signin и /signup, защищены авторизацией */
+app.use('/users', auth, usersRouter); // запросы в корень будем матчить с путями которые прописали в руте юзеров
+app.use('/cards', auth, cardsRouter);
+
 /** Любые маршруты не подходящие под созданные роуты, вызовут 404 статус */
 app.use((req, res, next) => {
   next(new NotFoundErr(ERR_CODE_404));

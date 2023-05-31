@@ -1,10 +1,12 @@
-// базовая ApplicationError
+/** базовая ApplicationError */
 class DefaultErr extends Error {
   constructor(message) {
-    super(message); // вызываем конструктор
+    super(message); // выз конструктор
     this.status = 500;
   }
 }
+
+/** вар.2 */
 // class DefaultErr extends Error {
 //   constructor(status = 500, message = 'Ошибка по умолчанию') {
 //     super(); // вызываем конструктор

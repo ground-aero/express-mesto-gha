@@ -14,7 +14,7 @@ const ERR_CODE_401 = 401;
 // 5.# /cards/:cardId/likes - Передан несуществующий _id карточки
 const ERR_CODE_404 = 404;
 
-// Ошибка по умолчанию.
+// err by default
 const ERR_CODE_500 = 500;
 
 module.exports = {

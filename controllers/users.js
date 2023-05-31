@@ -3,15 +3,10 @@
 const jsonwebtoken = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
-// const {
-//   ERR_CODE_400,
-//   // ERR_CODE_401,
-//   ERR_CODE_404,
-//   ERR_CODE_500,
-// } = require('../errors/errors-codes');
 const BadRequestErr = require('../errors/bad-req-err');
 const ConflictErr = require('../errors/conflict-err');
 const NotFoundErr = require('../errors/not-found-err');
+const { JWT_SECRET } = require('../config');
 // 200 - success; 201 - success, resource created; 400 - not valid data; 401 - not authorised
 // 403 - authorised, no access; 404 - resource not found; 422 - unprocessable entity
 
@@ -28,8 +23,7 @@ const createUser = (req, res, next) => {
     avatar,
     email,
     password,
-  } = req.body;
-  // получим из объекта req: имя,описание,аватар польз
+  } = req.body; // получим из объекта req: имя,описание,аватар польз
 
   bcrypt.hash(password, 10)
     .then((hash) => User.create(
@@ -37,8 +31,7 @@ const createUser = (req, res, next) => {
         name, about, avatar, email, password: hash,
       },
     ))
-    // и вернем/созд док на осн приш. данных.
-    // Вернём записаные в базу данные
+    // и вернем/созд док на осн приш. данных. // Вернём записаные в базу данные
     .then((user) => res.status(201).send({
       data: {
         _id: user._id,
@@ -52,12 +45,11 @@ const createUser = (req, res, next) => {
       if (err.code === 11000) {
         return next(new ConflictErr('Такой логин-емейл уже существует! (409)'));
       }
-      if (err.name === 'ValidationError') { // здесь написан верно!
+      if (err.name === 'ValidationError') {
         return next(new BadRequestErr('Переданы некорректные данные при создании пользователя'));
       }
       return next(err);
     });
-  // .catch(next);
 };
 
 /** @param req, GET /users
@@ -78,27 +70,27 @@ const login = (req, res, next) => {
   // ToDo: 1)find user, 2)check pass.., 3)return jwt & user
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      // юзаем библиотеку jsonwebtoken, методом sign создали JWT (внутрь котор записали _id)
-      const jwt = jsonwebtoken.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      /** библ. jsonwebtoken, вызовом метода .sign создаем токен.
+       * Методу sign передаем 2 аргумента: пейлоуд токена и секретный ключ подписи.
+       * Пейлоуд токена — зашифрованный в строку объект пользователя, его достаточно,
+       * чтобы однозначно определить пользователя
+       * 3-й необяз параметр — объект опций (список опций описан в док jsonwebtoken): expiresIn. */
+      const jwt = jsonwebtoken.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
       res.cookie('jsonwebtoken', jwt, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
         sameSite: true,
       });
-      res.send({ user, jwt });
+      res.send({ user, jwt }); // вернём токен
     })
     .catch(next);
 };
-
-// #PW-14
-// POST /auth/local/register
 
 /** @param req - GET /users/:userId,
  * Получить пользователя по ID (params.userId - ID пользователя)
  * @param res
  */
 const getUserById = (req, res, next) => {
-  // const { name, about, avatar } = req.body; // получим из объекта запроса имя,опис,автр польз
   const { userId } = req.params;
 
   return User.findById(userId)
@@ -118,7 +110,7 @@ const getUserById = (req, res, next) => {
     });
 };
 
-// #14 - GET /users/me - возвращает информацию о текущем пользователе
+// GET /users/me - возвращает инф о текущем пользователе
 const getCurrentUser = (req, res, next) => {
   // ToDo: check token, getUser from DB, return username & email
   const { authorization } = req.headers;
@@ -137,7 +129,7 @@ const getCurrentUser = (req, res, next) => {
     res.status(401).send({ message: 'Необходима авторизация' });
   }
 
-  // Залезть в BD и получить пользователя
+  /** Залезть в BD и получить пользователя */
   User
     .findById(payload._id)
     .orFail(() => res.status(404).send({ message: 'Пользователь не найден' }))
@@ -145,7 +137,6 @@ const getCurrentUser = (req, res, next) => {
       data: user,
     }))
     .catch(next);
-  // res.status(200).send({ message: 'getCurrentUser Ok' });
 };
 
 /** @param req, PATCH /users/me
@@ -159,7 +150,7 @@ const updateProfileInfo = (req, res, next) => {
   return User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
     // .orFail(() => new NotFoundErr('Такой пользователь не найден'))
     .then((user) => {
-      res.send({ data: user }); // res.status(200) добавл по дефолту
+      res.send({ data: user }); // res.status(200) по дефолту
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
@@ -177,14 +168,13 @@ const updateAvatar = (req, res, next) => {
   const { _id } = req.user;
   const { avatar } = req.body;
 
-  // return User.findByIdAndUpdate(_id, { avatar }, { new: true, runValidators: true })
   return User.findByIdAndUpdate(_id, { avatar }, { new: true, runValidators: true })
     // .orFail()
     .then((user) => {
       if (!user) {
         return next(new NotFoundErr('Пользователь с указанным _id не найден'));
       }
-      return res.send({ data: user }); // res.status(200) доб по дефолту
+      return res.send({ data: user }); // res.status(200) по дефолту
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {

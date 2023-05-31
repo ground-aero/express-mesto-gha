@@ -26,14 +26,6 @@ const userSchema = new mongoose.Schema({ // определить поля для
   avatar: {
     type: String,
     required: false,
-    // match: [isURL, 'Невалидный емейл'],
-    // validate: [validator.isURL, 'Введите ссылку для изображения'],
-    // validate: {
-    //   validator(link) {
-    //     return validator.isURL(link);
-    //   },
-    //   message: 'не является валидной URL ссылкой!',
-    // },
     validate: {
       validator: (link) => isURL(link), // join('')
       message: 'не является валидной URL ссылкой!',
@@ -43,23 +35,23 @@ const userSchema = new mongoose.Schema({ // определить поля для
   email: {
     type: String,
     unique: true,
-    required: [true, 'Поле "email" должно быть заполнено'],
+    required: [true, 'your "email" is to be filled-in'],
     validate: {
       validator(v) {
         return validator.isEmail(v);
       },
-      message: 'поле email должно быть валидным email-адресом',
+      message: 'your email should be a valid email-address',
     },
   },
   password: {
     type: String,
-    required: true,
+    required: [true, 'your password is required'],
     select: false, // Так по умолчанию хеш пароля польз-ля не будет возвращаться из базы
   },
 }, { versionKey: false });
 
-// добавим метод findUserByCredentials схеме пользователя
-// у него будет два параметра — почта и пароль
+/** добавим метод findUserByCredentials схеме пользователя
+ * у него будет два параметра — почта и пароль */
 userSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
   // ToDo: 1)пытаемся найти user(-а) по почте
   return this.findOne({ email }).select('+password') // this — это модель User
@@ -74,7 +66,7 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(email,
           if (!matched) {
             return Promise.reject(new AuthoErr('Неправильные почта или пароль***'));
           }
-          return user; // теперь user доступен
+          return user; /** теперь user доступен */
         });
     });
 };

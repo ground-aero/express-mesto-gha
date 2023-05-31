@@ -1,5 +1,3 @@
-// const regex = /^https?:\/\/(w{3}\.)?([-a-zA-Z0-9._~:/?#[\]@!$&'()*+-,;=]*)$[#]/gi;
-// const REGEX = /^https?:\/\/(w{3}\.)?([-a-zA-Z0-9._~:/?#[\]@!$&'()*+-,;=]*)(#)?$/gi;
 const REGEX = /^https?:\/\/(w{3}\.)?([-a-zA-Z0-9._~:/?#[\]@!$&'()*+-,;=]*)(#)?$/;
 
 const isURL = (link) => REGEX.test(link);
