@@ -17,6 +17,7 @@ const NotFoundErr = require('./errors/not-found-err');
 const { MONGO_URL } = require('./config');
 
 const { PORT = 3000 } = process.env;
+// console.log(process.env);
 const app = express();
 
 const usersRouter = require('./routes/users');
