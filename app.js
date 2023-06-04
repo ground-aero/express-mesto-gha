@@ -55,7 +55,7 @@ app.use(limiter); // Apply the rate limiting middleware to all requests
 app.use(morgan('dev'));
 
 /** 3 Routes which handling requests */
-// обработчики POST-запросов на роуты: '/signin' и '/signup'
+// обработчики POST-запросов на роуты: '/signin' и '/signup';
 app.post('/signin', loginValidator, login);
 app.post('/signup', createUserValidator, createUser);
 
