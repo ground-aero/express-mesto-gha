@@ -20,4 +20,5 @@
 
 #### При запуске приложение подключается к серверу mongo по адресу: mongodb://0.0.0.0:27017/mestodb ;
 
-#### Check-List: [https://code.s3.yandex.net/web-developer/checklists-pdf/new-program/checklist_13.pdf](https://code.s3.yandex.net/web-developer/checklists-pdf/new-program/checklist_13.pdf)
+#### Check-List №13: [https://code.s3.yandex.net/web-developer/checklists-pdf/new-program/checklist_13.pdf](https://code.s3.yandex.net/web-developer/checklists-pdf/new-program/checklist_13.pdf)
+#### Check-List №14: [https://code.s3.yandex.net/web-developer/checklists-pdf/new-program/checklist_14.pdf](https://code.s3.yandex.net/web-developer/checklists-pdf/new-program/checklist_14.pdf)
